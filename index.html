@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目文件导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+        }
+        .table-wrapper {
+            padding: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .icon-folder {
+            background: #ffd43b;
+            color: #8b5cf6;
+        }
+        .icon-file {
+            background: #e0e7ff;
+            color: #6366f1;
+        }
+        .icon-html {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+        .icon-md {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+        .icon-js {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        .link-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 13px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📁 项目文件导航</h1>
+            <p>点击链接跳转到对应页面</p>
+        </div>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>文件/项目/文件夹名称</th>
+                        <th>超链接</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-folder">📂</span>
+                                <span>deploy <span class="badge">文件夹</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="deploy/index.html" target="_blank">deploy/index.html</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-html">🌐</span>
+                                <span>invoice-calculator.html <span class="badge">HTML</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="invoice-calculator.html" target="_blank">invoice-calculator.html</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-html">🌐</span>
+                                <span>test.html <span class="badge">HTML</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="test.html" target="_blank">test.html</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-md">📝</span>
+                                <span>GIT_CONFIG.md <span class="badge">Markdown</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="GIT_CONFIG.md" target="_blank">GIT_CONFIG.md</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-md">📝</span>
+                                <span>GIT_GUIDE.md <span class="badge">Markdown</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="GIT_GUIDE.md" target="_blank">GIT_GUIDE.md</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-md">📝</span>
+                                <span>PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">Markdown</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="PRD-存货商品开票数量生成器-功能规则说明.md" target="_blank">PRD-存货商品开票数量生成器-功能规则说明.md</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-md">📝</span>
+                                <span>部署历史记录.md <span class="badge">Markdown</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="部署历史记录.md" target="_blank">部署历史记录.md</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="file-name">
+                                <span class="icon icon-js">⚙️</span>
+                                <span>deploy.js <span class="badge">JavaScript</span></span>
+                            </div>
+                        </td>
+                        <td class="link-cell">
+                            <a href="deploy.js" target="_blank">deploy.js</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>项目地址: <a href="https://github.com/Fred-Leifu/ai-zidonghua" target="_blank">GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
