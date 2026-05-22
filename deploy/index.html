@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存货商品开票数量生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .content {
+            padding: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .result-section {
+            margin-top: 24px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .result-section.error {
+            background: #fff5f5;
+            border: 1px solid #ffe5e5;
+        }
+        .result-section.success {
+            background: #f0fff4;
+            border: 1px solid #c6f6d5;
+        }
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-title.error {
+            color: #c53030;
+        }
+        .result-title.success {
+            color: #2f855a;
+        }
+        .result-title.warning {
+            color: #d69e2e;
+        }
+        .copy-btn {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #3182ce;
+        }
+        .result-message {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+        .result-message.error {
+            color: #c53030;
+        }
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .order-list {
+            margin-top: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .order-index {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .order-info {
+            flex: 1;
+        }
+        .order-number {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .order-warning {
+            font-size: 12px;
+            color: #d69e2e;
+            margin-top: 2px;
+        }
+        .legend {
+            margin-top: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        .legend h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        .range-info {
+            margin-top: 12px;
+            padding: 12px;
+            background: #e6fffa;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #319795;
+        }
+        .range-info h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .algorithm-steps {
+            margin-top: 24px;
+            padding: 20px;
+            background: #fff3e0;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #744210;
+        }
+        .algorithm-steps h4 {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #5c3d2e;
+        }
+        .algorithm-steps ol {
+            list-style-position: inside;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 存货商品开票数量生成器</h1>
+            <p>基于正态分布随机生成无规律的开票数量</p>
+        </div>
+        <div class="content">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="stockQty">存货数量 (S)</label>
+                    <input type="number" id="stockQty" placeholder="请输入存货数量" min="1" step="1">
+                </div>
+                <div class="form-group">
+                    <label for="orderQty">订单数量 (N)</label>
+                    <input type="number" id="orderQty" placeholder="请输入订单数量" min="1" step="1">
+                </div>
+            </div>
+
+            <div class="range-info">
+                <h4>📊 生成规则</h4>
+                <p id="rangeText">基于平均值（存货/订单）的正态分布随机生成</p>
+            </div>
+
+            <button class="btn" onclick="generate()">开始生成</button>
+            <button class="btn" onclick="reset()" style="background: #6c757d; margin-top: 8px;">重置</button>
+
+            <div class="result-section" id="resultSection">
+                <div class="result-title" id="resultTitle">
+                    <span id="resultIcon">📋</span>
+                    <span>生成结果</span>
+                    <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()" style="display: none;">
+                        📋 复制结果
+                    </button>
+                </div>
+                <div class="result-message" id="resultMessage"></div>
+                
+                <div class="result-stats" id="resultStats" style="display: none;">
+                    <div class="stat-item">
+                        <div class="stat-label">订单总数</div>
+                        <div class="stat-value" id="statTotal"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">合计数量</div>
+                        <div class="stat-value" id="statSum"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">平均数量</div>
+                        <div class="stat-value" id="statAvg"></div>
+                    </div>
+                </div>
+
+                <div class="order-list" id="orderList"></div>
+                
+                <div id="copySuccess" style="display: none; text-align: center; color: #48bb78; padding: 10px;">✓ 已复制到剪贴板，可直接粘贴到Excel</div>
+
+                <div class="legend" id="legend" style="display: none;">
+                    <h4>🔍 图例说明</h4>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #c6f6d5;"></div>
+                        <span>正常范围值</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #feebc8;"></div>
+                        <span>超范围值（需人工调整）</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-steps">
+                <h4>🔄 算法流程说明</h4>
+                <ol>
+                    <li><strong>初始化</strong>：每单分配1条，确保每个订单至少有值</li>
+                    <li><strong>正态分布分配（带相邻校验）</strong>：围绕平均值随机生成，若与前两单相同则重新生成</li>
+                    <li><strong>总和精确调整</strong>：调整差值确保总和严格等于存货数量，同时避免连续三个相同值</li>
+                    <li><strong>一键复制</strong>：生成可复制结果，支持直接粘贴到Excel</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            if (!window.currentQuantities || window.currentQuantities.length === 0) {
+                alert('请先生成开票数量');
+                return;
+            }
+            
+            const text = window.currentQuantities.join('\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.style.display = 'block';
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        function validate(stockQty, orderQty) {
+            if (!Number.isInteger(stockQty) || !Number.isInteger(orderQty)) {
+                return { valid: false, message: '存货商品数量/订单数量不能为0、负数、小数' };
+            }
+            if (stockQty <= 0 || orderQty <= 0) {
+                return { valid: false, message: '存货商品数量/订单数量不能为0、负数、小数' };
+            }
+            if (stockQty < orderQty) {
+                return { valid: false, message: '存货商品数量不能小于订单数量（每单至少1条）' };
+            }
+            return { valid: true, message: '' };
+        }
+
+        function generate() {
+            const stockQty = parseInt(document.getElementById('stockQty').value);
+            const orderQty = parseInt(document.getElementById('orderQty').value);
+
+            const validation = validate(stockQty, orderQty);
+            const resultSection = document.getElementById('resultSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            const resultStats = document.getElementById('resultStats');
+            const orderList = document.getElementById('orderList');
+            const legend = document.getElementById('legend');
+            const copyBtn = document.getElementById('copyBtn');
+            const copySuccess = document.getElementById('copySuccess');
+
+            if (!validation.valid) {
+                resultSection.className = 'result-section show error';
+                resultTitle.className = 'result-title error';
+                document.getElementById('resultIcon').textContent = '❌';
+                resultMessage.className = 'result-message error';
+                resultMessage.innerHTML = validation.message;
+                resultStats.style.display = 'none';
+                orderList.innerHTML = '';
+                legend.style.display = 'none';
+                copyBtn.style.display = 'none';
+                return;
+            }
+
+            const result = generateQuantities(stockQty, orderQty);
+
+            window.currentQuantities = result.quantities;
+
+            resultSection.className = 'result-section show success';
+            resultTitle.className = 'result-title success';
+            document.getElementById('resultIcon').textContent = '✅';
+            resultMessage.className = 'result-message';
+            resultMessage.innerHTML = `已成功为 ${orderQty} 个订单生成开票数量，合计 ${result.sum} 条。`;
+
+            document.getElementById('statTotal').textContent = orderQty;
+            document.getElementById('statSum').textContent = result.sum;
+            document.getElementById('statAvg').textContent = (result.sum / orderQty).toFixed(1);
+            resultStats.style.display = 'grid';
+            legend.style.display = 'none';
+            copyBtn.style.display = 'inline-block';
+            copySuccess.style.display = 'none';
+
+            let html = '';
+            result.quantities.forEach((qty, index) => {
+                html += `
+                    <div class="order-item">
+                        <div class="order-index">${index + 1}</div>
+                        <div class="order-info">
+                            <div class="order-number">${qty} 条</div>
+                        </div>
+                    </div>`;
+            });
+            orderList.innerHTML = html;
+        }
+
+        function generateQuantities(S, N) {
+            const avg = Math.round(S / N);
+            let quantities = [];
+            let totalAssigned = 0;
+            let remaining = S;
+
+            for (let i = 0; i < N && remaining > 0; i++) {
+                const remainingOrders = N - i;
+                const minForThis = Math.max(1, remaining - (remainingOrders - 1) * Math.floor(avg * 2));
+                const maxForThis = Math.min(Math.floor(avg * 2), remaining - (remainingOrders - 1));
+                
+                let value;
+                let attempts = 0;
+                
+                do {
+                    const center = Math.round((minForThis + maxForThis) / 2);
+                    const range = maxForThis - minForThis;
+                    const stdDev = Math.max(1, Math.floor(range / 4));
+                    
+                    if (range > 0) {
+                        value = Math.round(normalRandom(center, stdDev));
+                        value = Math.max(minForThis, Math.min(maxForThis, value));
+                    } else {
+                        value = minForThis;
+                    }
+                    attempts++;
+                } while (attempts < 50 && i >= 2 && value === quantities[i-1] && value === quantities[i-2]);
+                
+                quantities.push(value);
+                totalAssigned += value;
+                remaining -= value;
+            }
+
+            let diff = S - totalAssigned;
+            while (diff !== 0) {
+                const candidates = quantities
+                    .map((val, idx) => ({ val, idx }))
+                    .filter(item => diff > 0 || item.val > 1);
+                
+                if (candidates.length === 0) break;
+                
+                let found = false;
+                for (const candidate of candidates) {
+                    const newValue = candidate.val + (diff > 0 ? 1 : -1);
+                    const hasTriple = 
+                        (candidate.idx >= 2 && newValue === quantities[candidate.idx-1] && newValue === quantities[candidate.idx-2]) ||
+                        (candidate.idx >= 1 && candidate.idx < N-1 && newValue === quantities[candidate.idx-1] && newValue === quantities[candidate.idx+1]);
+                    
+                    if (!hasTriple) {
+                        quantities[candidate.idx] = newValue;
+                        diff += diff > 0 ? -1 : 1;
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found && candidates.length > 0) {
+                    const idx = candidates[Math.floor(Math.random() * candidates.length)].idx;
+                    quantities[idx] += diff > 0 ? 1 : -1;
+                    diff += diff > 0 ? -1 : 1;
+                }
+            }
+
+            return {
+                quantities,
+                sum: quantities.reduce((a, b) => a + b, 0),
+                hasWarning: false
+            };
+        }
+
+        function normalRandom(mean, stdDev) {
+            let u1 = Math.random();
+            let u2 = Math.random();
+            let z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+            return z0 * stdDev + mean;
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function eliminateConsecutiveTriplesSimple(arr) {
+            const result = [...arr];
+            let changed = true;
+            let iterations = 0;
+            
+            while (changed && iterations < 20) {
+                changed = false;
+                iterations++;
+                
+                for (let i = 2; i < result.length; i++) {
+                    if (result[i] === result[i-1] && result[i] === result[i-2]) {
+                        const swappable = [];
+                        for (let j = 0; j < result.length; j++) {
+                            if (j < i-2 || j > i) {
+                                if (result[j] !== result[i]) {
+                                    swappable.push(j);
+                                }
+                            }
+                        }
+                        
+                        if (swappable.length > 0) {
+                            const randomIdx = Math.floor(Math.random() * swappable.length);
+                            const swapWith = swappable[randomIdx];
+                            [result[i], result[swapWith]] = [result[swapWith], result[i]];
+                            changed = true;
+                        } else if (i + 1 < result.length) {
+                            [result[i], result[i+1]] = [result[i+1], result[i]];
+                            changed = true;
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        function ensureSumExact(arr, targetSum) {
+            const result = [...arr];
+            let currentSum = result.reduce((a, b) => a + b, 0);
+            let diff = targetSum - currentSum;
+
+            while (diff !== 0) {
+                const indices = result
+                    .map((val, idx) => ({ val, idx }))
+                    .filter(item => diff > 0 || item.val > 1)
+                    .sort((a, b) => diff > 0 ? a.val - b.val : b.val - a.val);
+                
+                if (indices.length === 0) break;
+                
+                const idx = indices[0].idx;
+                const change = diff > 0 ? 1 : -1;
+                const newValue = result[idx] + change;
+                
+                const hasTriple = 
+                    (idx >= 2 && newValue === result[idx-1] && newValue === result[idx-2]) ||
+                    (idx >= 1 && idx < result.length - 1 && newValue === result[idx-1] && newValue === result[idx+1]);
+                
+                if (!hasTriple || indices.length === 1) {
+                    result[idx] = newValue;
+                    diff -= change;
+                } else if (indices.length > 1) {
+                    const idx2 = indices[1].idx;
+                    result[idx2] += change;
+                    diff -= change;
+                }
+            }
+            
+            return result;
+        }
+
+        function reset() {
+            document.getElementById('stockQty').value = '';
+            document.getElementById('orderQty').value = '';
+            document.getElementById('resultSection').className = 'result-section';
+        }
+    </script>
+</body>
+</html>
