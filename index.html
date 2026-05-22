@@ -39,36 +39,81 @@
             color: rgba(255, 255, 255, 0.85);
             font-size: 14px;
         }
-        .table-wrapper {
+        .tree-wrapper {
             padding: 30px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .tree {
+            list-style: none;
         }
-        th {
-            background: #f8f9fa;
-            padding: 14px 20px;
-            text-align: left;
-            font-weight: 600;
-            color: #495057;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #dee2e6;
+        .tree li {
+            position: relative;
+            padding-left: 24px;
+            line-height: 2;
         }
-        td {
-            padding: 16px 20px;
-            border-bottom: 1px solid #e9ecef;
-            transition: background-color 0.2s;
+        .tree li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 12px;
+            height: 1px;
+            background: #ddd;
         }
-        tr:hover td {
-            background-color: #f8f9fa;
+        .tree li::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 1px;
+            height: 100%;
+            background: #ddd;
         }
-        .file-name {
+        .tree li:last-child::after {
+            height: 13px;
+        }
+        .tree li.folder {
+            padding-left: 0;
+        }
+        .tree li.folder::before,
+        .tree li.folder::after {
+            display: none;
+        }
+        .tree li.folder > .item-wrapper {
+            padding-left: 24px;
+        }
+        .folder-toggle {
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .folder-toggle:hover {
+            background: #764ba2;
+        }
+        .folder-toggle.open {
+            transform: rotate(90deg);
+        }
+        .item-wrapper {
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .item-wrapper:hover {
+            background-color: #f8f9fa;
         }
         .icon {
             width: 20px;
@@ -83,6 +128,10 @@
         .icon-folder {
             background: #ffd43b;
             color: #8b5cf6;
+        }
+        .icon-folder-open {
+            background: #8b5cf6;
+            color: #ffd43b;
         }
         .icon-file {
             background: #e0e7ff;
@@ -100,19 +149,53 @@
             background: #fef3c7;
             color: #d97706;
         }
-        a {
-            color: #3b82f6;
-            text-decoration: none;
+        .file-name {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #10b981;
+            color: white;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 500;
-            transition: color 0.2s;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
         }
-        a:hover {
-            color: #2563eb;
-            text-decoration: underline;
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.6);
         }
-        .link-cell {
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+        }
+        .copy-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+        .folder-content {
+            display: none;
+            margin-left: 16px;
+        }
+        .folder-content.open {
+            display: block;
         }
         .footer {
             background: #f8f9fa;
@@ -121,45 +204,12 @@
             color: #6c757d;
             font-size: 13px;
         }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: #10b981;
-            color: white;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
         }
-        .copy-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-        }
-        .copy-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
-        }
-        .copy-btn:active {
-            transform: translateY(0);
-        }
-        .copy-btn.copied {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
-        }
-        .copy-btn svg {
-            width: 14px;
-            height: 14px;
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -167,207 +217,155 @@
     <div class="container">
         <div class="header">
             <h1>📁 项目文件导航</h1>
-            <p>点击链接跳转到对应页面</p>
+            <p>点击文件夹图标展开/折叠，点击复制按钮复制访问地址</p>
         </div>
         
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>文件/项目/文件夹名称</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="file-name">
-                                <span class="icon icon-folder">📂</span>
-                                <span>docs/ <span class="badge">文档目录</span></span>
-                            </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="docs/">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+        <div class="tree-wrapper">
+            <ul class="tree">
+                <li class="folder">
+                    <div class="item-wrapper">
+                        <button class="folder-toggle">▶</button>
+                        <span class="icon icon-folder">📂</span>
+                        <span class="file-name">docs/ <span class="badge">文档目录</span></span>
+                    </div>
+                    <ul class="folder-content">
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-md">📝</span>
-                                <span>docs/GIT_CONFIG.md <span class="badge">配置记录</span></span>
+                                <span class="file-name">GIT_CONFIG.md <span class="badge">配置记录</span></span>
+                                <button class="copy-btn" data-url="docs/GIT_CONFIG.md">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="docs/GIT_CONFIG.md">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-md">📝</span>
-                                <span>docs/GIT_GUIDE.md <span class="badge">使用指南</span></span>
+                                <span class="file-name">GIT_GUIDE.md <span class="badge">使用指南</span></span>
+                                <button class="copy-btn" data-url="docs/GIT_GUIDE.md">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="docs/GIT_GUIDE.md">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-md">📝</span>
-                                <span>docs/PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">需求文档</span></span>
+                                <span class="file-name">PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">需求文档</span></span>
+                                <button class="copy-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-md">📝</span>
-                                <span>docs/部署历史记录.md <span class="badge">部署记录</span></span>
+                                <span class="file-name">部署历史记录.md <span class="badge">部署记录</span></span>
+                                <button class="copy-btn" data-url="docs/部署历史记录.md">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="docs/部署历史记录.md">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
-                                <span class="icon icon-folder">📂</span>
-                                <span>html/ <span class="badge">HTML页面</span></span>
-                            </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="html/">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="folder">
+                    <div class="item-wrapper">
+                        <button class="folder-toggle">▶</button>
+                        <span class="icon icon-folder">📂</span>
+                        <span class="file-name">html/ <span class="badge">HTML页面</span></span>
+                    </div>
+                    <ul class="folder-content">
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-html">🌐</span>
-                                <span>html/invoice-calculator.html <span class="badge">开票计算器</span></span>
+                                <span class="file-name">invoice-calculator.html <span class="badge">开票计算器</span></span>
+                                <button class="copy-btn" data-url="html/invoice-calculator.html">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="html/invoice-calculator.html">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-html">🌐</span>
-                                <span>html/test.html <span class="badge">测试页面</span></span>
+                                <span class="file-name">test.html <span class="badge">测试页面</span></span>
+                                <button class="copy-btn" data-url="html/test.html">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="html/test.html">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
-                                <span class="icon icon-folder">📂</span>
-                                <span>scripts/ <span class="badge">脚本目录</span></span>
-                            </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="scripts/">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="folder">
+                    <div class="item-wrapper">
+                        <button class="folder-toggle">▶</button>
+                        <span class="icon icon-folder">📂</span>
+                        <span class="file-name">scripts/ <span class="badge">脚本目录</span></span>
+                    </div>
+                    <ul class="folder-content">
+                        <li>
+                            <div class="item-wrapper">
                                 <span class="icon icon-js">⚙️</span>
-                                <span>scripts/deploy.js <span class="badge">部署脚本</span></span>
+                                <span class="file-name">deploy.js <span class="badge">部署脚本</span></span>
+                                <button class="copy-btn" data-url="scripts/deploy.js">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="scripts/deploy.js">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="file-name">
-                                <span class="icon icon-folder">📂</span>
-                                <span>deploy/ <span class="badge">部署目录</span></span>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="folder">
+                    <div class="item-wrapper">
+                        <button class="folder-toggle">▶</button>
+                        <span class="icon icon-folder">📂</span>
+                        <span class="file-name">deploy/ <span class="badge">部署目录</span></span>
+                    </div>
+                    <ul class="folder-content">
+                        <li>
+                            <div class="item-wrapper">
+                                <span class="icon icon-html">🌐</span>
+                                <span class="file-name">index.html</span>
+                                <button class="copy-btn" data-url="deploy/index.html">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    复制
+                                </button>
                             </div>
-                        </td>
-                        <td>
-                            <button class="copy-btn" data-url="deploy/index.html">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制地址
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
         
         <div class="footer">
@@ -379,7 +377,20 @@
         const baseUrl = 'https://fred-leifu.github.io/ai-zidonghua/';
         
         document.addEventListener('DOMContentLoaded', function() {
+            const folderToggles = document.querySelectorAll('.folder-toggle');
             const copyButtons = document.querySelectorAll('.copy-btn');
+            
+            folderToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const folderContent = this.parentElement.parentElement.querySelector('.folder-content');
+                    const icon = this.parentElement.querySelector('.icon');
+                    
+                    this.classList.toggle('open');
+                    folderContent.classList.toggle('open');
+                    icon.classList.toggle('icon-folder');
+                    icon.classList.toggle('icon-folder-open');
+                });
+            });
             
             copyButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -402,7 +413,7 @@
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                                 </svg>
-                                复制地址
+                                复制
                             `;
                         }, 2000);
                     }).catch(err => {
