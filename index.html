@@ -131,6 +131,36 @@
             font-weight: 600;
             margin-left: 8px;
         }
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
     </style>
 </head>
 <body>
@@ -145,7 +175,7 @@
                 <thead>
                     <tr>
                         <th>文件/项目/文件夹名称</th>
-                        <th>超链接</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,8 +186,14 @@
                                 <span>deploy <span class="badge">文件夹</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="deploy/index.html" target="_blank">deploy/index.html</a>
+                        <td>
+                            <button class="copy-btn" data-url="deploy/index.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -167,8 +203,14 @@
                                 <span>invoice-calculator.html <span class="badge">HTML</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="invoice-calculator.html" target="_blank">invoice-calculator.html</a>
+                        <td>
+                            <button class="copy-btn" data-url="invoice-calculator.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -178,8 +220,14 @@
                                 <span>test.html <span class="badge">HTML</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="test.html" target="_blank">test.html</a>
+                        <td>
+                            <button class="copy-btn" data-url="test.html">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -189,8 +237,14 @@
                                 <span>GIT_CONFIG.md <span class="badge">Markdown</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="GIT_CONFIG.md" target="_blank">GIT_CONFIG.md</a>
+                        <td>
+                            <button class="copy-btn" data-url="GIT_CONFIG.md">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -200,8 +254,14 @@
                                 <span>GIT_GUIDE.md <span class="badge">Markdown</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="GIT_GUIDE.md" target="_blank">GIT_GUIDE.md</a>
+                        <td>
+                            <button class="copy-btn" data-url="GIT_GUIDE.md">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -211,8 +271,14 @@
                                 <span>PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">Markdown</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="PRD-存货商品开票数量生成器-功能规则说明.md" target="_blank">PRD-存货商品开票数量生成器-功能规则说明.md</a>
+                        <td>
+                            <button class="copy-btn" data-url="PRD-存货商品开票数量生成器-功能规则说明.md">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -222,8 +288,14 @@
                                 <span>部署历史记录.md <span class="badge">Markdown</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="部署历史记录.md" target="_blank">部署历史记录.md</a>
+                        <td>
+                            <button class="copy-btn" data-url="部署历史记录.md">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -233,8 +305,14 @@
                                 <span>deploy.js <span class="badge">JavaScript</span></span>
                             </div>
                         </td>
-                        <td class="link-cell">
-                            <a href="deploy.js" target="_blank">deploy.js</a>
+                        <td>
+                            <button class="copy-btn" data-url="deploy.js">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -245,5 +323,43 @@
             <p>项目地址: <a href="https://github.com/Fred-Leifu/ai-zidonghua" target="_blank">GitHub</a></p>
         </div>
     </div>
+
+    <script>
+        const baseUrl = 'https://fred-leifu.github.io/ai-zidonghua/';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const relativeUrl = this.getAttribute('data-url');
+                    const fullUrl = baseUrl + relativeUrl;
+                    
+                    navigator.clipboard.writeText(fullUrl).then(() => {
+                        this.classList.add('copied');
+                        this.innerHTML = `
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            已复制
+                        `;
+                        
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                            this.innerHTML = `
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                复制地址
+                            `;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
