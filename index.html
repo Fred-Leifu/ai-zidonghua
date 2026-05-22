@@ -211,6 +211,55 @@
         .footer a:hover {
             text-decoration: underline;
         }
+        .search-container {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.2s;
+            background: white;
+        }
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .search-box::placeholder {
+            color: #adb5bd;
+        }
+        .search-results {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .search-results .highlight {
+            background: #fef08a;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .no-results svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .match {
+            background: #fef08a !important;
+        }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -218,6 +267,11 @@
         <div class="header">
             <h1>📁 项目文件导航</h1>
             <p>点击文件夹图标展开/折叠，点击复制按钮复制访问地址</p>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-results" id="searchResults"></div>
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索文件名...">
         </div>
         
         <div class="tree-wrapper">
@@ -379,6 +433,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const folderToggles = document.querySelectorAll('.folder-toggle');
             const copyButtons = document.querySelectorAll('.copy-btn');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const treeWrapper = document.querySelector('.tree-wrapper');
             
             folderToggles.forEach(toggle => {
                 toggle.addEventListener('click', function() {
@@ -421,6 +478,105 @@
                     });
                 });
             });
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    resetSearch();
+                    return;
+                }
+                
+                searchFiles(searchTerm);
+            });
+            
+            function searchFiles(searchTerm) {
+                const allItems = document.querySelectorAll('.tree li');
+                const folderItems = document.querySelectorAll('.tree li.folder');
+                const fileItems = document.querySelectorAll('.tree li:not(.folder)');
+                
+                let matchCount = 0;
+                
+                folderItems.forEach(folder => {
+                    folder.classList.remove('hidden');
+                    folder.querySelector('.folder-content').classList.remove('open');
+                    folder.querySelector('.folder-toggle').classList.remove('open');
+                    folder.querySelector('.icon').classList.add('icon-folder');
+                    folder.querySelector('.icon').classList.remove('icon-folder-open');
+                    folder.querySelector('.item-wrapper').classList.remove('match');
+                });
+                
+                fileItems.forEach(item => {
+                    const fileName = item.querySelector('.file-name').textContent.toLowerCase();
+                    const itemWrapper = item.querySelector('.item-wrapper');
+                    
+                    if (fileName.includes(searchTerm)) {
+                        item.classList.remove('hidden');
+                        itemWrapper.classList.add('match');
+                        
+                        const parentFolder = item.closest('.folder');
+                        if (parentFolder) {
+                            parentFolder.classList.remove('hidden');
+                            parentFolder.querySelector('.folder-content').classList.add('open');
+                            parentFolder.querySelector('.folder-toggle').classList.add('open');
+                            parentFolder.querySelector('.icon').classList.remove('icon-folder');
+                            parentFolder.querySelector('.icon').classList.add('icon-folder-open');
+                            
+                            const folderName = parentFolder.querySelector('.file-name').textContent.toLowerCase();
+                            if (folderName.includes(searchTerm)) {
+                                parentFolder.querySelector('.item-wrapper').classList.add('match');
+                            }
+                        }
+                        matchCount++;
+                    } else {
+                        item.classList.add('hidden');
+                        itemWrapper.classList.remove('match');
+                    }
+                });
+                
+                folderItems.forEach(folder => {
+                    const folderName = folder.querySelector('.file-name').textContent.toLowerCase();
+                    const hasVisibleChildren = folder.querySelector('.folder-content li:not(.hidden)');
+                    
+                    if (!hasVisibleChildren && !folderName.includes(searchTerm)) {
+                        folder.classList.add('hidden');
+                    } else if (folderName.includes(searchTerm)) {
+                        folder.querySelector('.item-wrapper').classList.add('match');
+                        folder.querySelector('.folder-content').classList.add('open');
+                        folder.querySelector('.folder-toggle').classList.add('open');
+                        folder.querySelector('.icon').classList.remove('icon-folder');
+                        folder.querySelector('.icon').classList.add('icon-folder-open');
+                        matchCount++;
+                    }
+                });
+                
+                if (matchCount === 0) {
+                    searchResults.innerHTML = `<span style="color: #ef4444;">未找到包含 "<span class="highlight">${searchTerm}</span>" 的文件</span>`;
+                } else {
+                    searchResults.innerHTML = `找到 <span class="highlight">${matchCount}</span> 个匹配结果`;
+                }
+            }
+            
+            function resetSearch() {
+                searchResults.innerHTML = '';
+                
+                const allItems = document.querySelectorAll('.tree li');
+                const folderContents = document.querySelectorAll('.folder-content');
+                const folderToggles = document.querySelectorAll('.folder-toggle');
+                const icons = document.querySelectorAll('.icon');
+                const itemWrappers = document.querySelectorAll('.item-wrapper');
+                
+                allItems.forEach(item => item.classList.remove('hidden'));
+                folderContents.forEach(content => content.classList.remove('open'));
+                folderToggles.forEach(toggle => toggle.classList.remove('open'));
+                icons.forEach(icon => {
+                    icon.classList.remove('icon-folder-open');
+                    if (icon.classList.contains('icon-folder-open')) {
+                        icon.classList.add('icon-folder');
+                    }
+                });
+                itemWrappers.forEach(wrapper => wrapper.classList.remove('match'));
+            }
         });
     </script>
 </body>
