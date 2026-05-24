@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>销售综合管理系统 - 账单管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 顶部导航栏 */
+        .top-header {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 60px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        
+        /* 顶部菜单 */
+        .top-menu {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .menu-item .icon {
+            font-size: 16px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge span {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 主体布局 */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* 左侧菜单 */
+        .sidebar {
+            width: 220px;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            padding: 16px 0;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-title {
+            padding: 0 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-item {
+            margin: 4px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-link:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+        
+        .sidebar-item.active .sidebar-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .sidebar-item.active .sidebar-link:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .sidebar-icon {
+            font-size: 18px;
+        }
+        
+        /* 页面内容 */
+        .page-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 搜索条件区 */
+        .search-bar {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .search-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .search-item label {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .search-item select,
+        .search-item input {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+        
+        .search-item input:focus,
+        .search-item select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-default {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-default:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        
+        /* 操作栏 */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* 表格 */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+        }
+        
+        td {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        tr:hover {
+            background: #fafafa;
+        }
+        
+        /* 状态标签 */
+        .status-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-pending-estimate {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        
+        .status-pending-confirm {
+            background: #FFF8E1;
+            color: #F57C00;
+        }
+        
+        .status-confirmed {
+            background: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .status-pending-payment {
+            background: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .status-paid {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .status-dispute {
+            background: #F5F5F5;
+            color: #616161;
+        }
+        
+        /* 操作按钮 */
+        .table-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .table-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .table-btn-view {
+            background: #EFF6FF;
+            color: #3B82F6;
+        }
+        
+        .table-btn-view:hover {
+            background: #DBEAFE;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+        
+        .table-btn-action {
+            background: #ECFDF5;
+            color: #10B981;
+        }
+        
+        .table-btn-action:hover {
+            background: #D1FAE5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+        
+        .table-btn-warning {
+            background: #FFFBEB;
+            color: #F59E0B;
+        }
+        
+        .table-btn-warning:hover {
+            background: #FEF3C7;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        }
+        
+        .table-btn-danger {
+            background: #FEF2F2;
+            color: #EF4444;
+        }
+        
+        .table-btn-danger:hover {
+            background: #FEE2E2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* 金额样式 */
+        .amount-positive {
+            color: #22c55e;
+        }
+        
+        .amount-negative {
+            color: #ef4444;
+        }
+        
+        .amount-strikethrough {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 16px;
+            gap: 8px;
+        }
+        
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* 弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .modal-close {
+            border: none;
+            background: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 4px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        /* 表单 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        
+        .form-label .required {
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* 详情页 */
+        .detail-page {
+            display: none;
+        }
+        
+        .detail-page.show {
+            display: block;
+        }
+        
+        .list-page.hide {
+            display: none;
+        }
+        
+        .detail-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        
+        .detail-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .info-item {
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #334155;
+            font-weight: 500;
+        }
+        
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .section-body {
+            padding: 20px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            padding: 8px 16px;
+            background: #f0f3ff;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #e0e7ff;
+            text-decoration: underline;
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .stat-icon.orange {
+            background: #ffedd5;
+            color: #f97316;
+        }
+        
+        .stat-icon.yellow {
+            background: #fef3c7;
+            color: #eab308;
+        }
+        
+        .stat-icon.red {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        
+        .stat-icon.green {
+            background: #dcfce7;
+            color: #22c55e;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        /* 客户详情页 - 账期列表 */
+        .period-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .period-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .period-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-color: #e2e8f0;
+        }
+        
+        .period-card.active {
+            border-color: #667eea;
+            background: #f8faff;
+        }
+        
+        .period-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .period-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .period-status {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .period-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .period-meta {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .period-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .detail-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar-title {
+                display: none;
+            }
+            
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-link {
+                justify-content: center;
+            }
+            
+            .top-menu {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .period-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-row {
+                justify-content: center;
+            }
+            
+            .search-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="top-header">
+        <div class="header-left">
+            <div class="logo">
+                <span>📊</span>
+                <span>销售综合管理</span>
+            </div>
+            <nav class="top-menu">
+                <a href="index.html" class="menu-item">
+                    <span class="icon">🏠</span>
+                    <span class="text">工作台</span>
+                </a>
+                <a href="bill-management.html" class="menu-item active">
+                    <span class="icon">📋</span>
+                    <span class="text">账单管理</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span>
+                    <span class="text">系统设置</span>
+                </a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="notification-badge">
+                <span>3</span>
+                <span style="font-size: 20px;">🔔</span>
+            </div>
+            <div class="user-menu">
+                <span style="font-size: 14px; color: #cbd5e1;">张三</span>
+                <div class="user-avatar">张</div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主体布局 -->
+    <div class="main-layout">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="sidebar-title">账单管理</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" id="menu-customer">
+                    <a href="#" class="sidebar-link" onclick="switchPage('customer')">
+                        <span class="sidebar-icon">👤</span>
+                        <span>客户账单</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" id="menu-group">
+                    <a href="#" class="sidebar-link" onclick="switchPage('group')">
+                        <span class="sidebar-icon">👥</span>
+                        <span>课题组账单</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" id="menu-company">
+                    <a href="#" class="sidebar-link" onclick="switchPage('company')">
+                        <span class="sidebar-icon">🏢</span>
+                        <span>单位账单</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" id="menu-all">
+                    <a href="#" class="sidebar-link" onclick="switchPage('all')">
+                        <span class="sidebar-icon">📋</span>
+                        <span>全部账单</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" id="menu-dispute">
+                    <a href="#" class="sidebar-link" onclick="switchPage('dispute')">
+                        <span class="sidebar-icon">⚠️</span>
+                        <span>异议账单</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- 页面内容 -->
+        <main class="page-content">
+            <!-- 客户账单页面 -->
+            <div id="page-customer" class="page-section">
+                <h1 class="page-title">👤 客户账单</h1>
+                
+                <!-- 搜索条件 -->
+                <div class="search-bar">
+                    <div class="search-row">
+                        <div class="search-item">
+                            <label>客户名称：</label>
+                            <input type="text" id="customerSearch" placeholder="请输入客户名称">
+                        </div>
+                        <div class="search-item">
+                            <label>所属单位：</label>
+                            <select id="customerCompanyFilter">
+                                <option value="">全部单位</option>
+                                <option value="company1">北京科技研究院</option>
+                                <option value="company2">上海贸易集团</option>
+                                <option value="company3">广州高校联盟</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-default" onclick="searchCustomer()">搜索</button>
+                        <button class="btn btn-primary" onclick="resetCustomerSearch()">重置</button>
+                    </div>
+                </div>
+                
+                <!-- 客户账单列表 -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>客户ID</th>
+                                <th>客户名称</th>
+                                <th>暂估账单金额</th>
+                                <th>待确认金额</th>
+                                <th>待回款金额</th>
+                                <th>已回款金额</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination">
+                        <span style="font-size: 14px; color: #64748b; margin-right: 16px;">共 <span id="customerTotal">4</span> 条记录</span>
+                        <button class="page-btn" id="customerPrev">上一页</button>
+                        <button class="page-btn active" data-page="1">1</button>
+                        <button class="page-btn" id="customerNext">下一页</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 课题组账单页面 -->
+            <div id="page-group" class="page-section" style="display: none;">
+                <h1 class="page-title">👥 课题组账单</h1>
+                
+                <div class="search-bar">
+                    <div class="search-row">
+                        <div class="search-item">
+                            <label>课题组名称：</label>
+                            <input type="text" id="groupSearch" placeholder="请输入课题组名称">
+                        </div>
+                        <div class="search-item">
+                            <label>所属单位：</label>
+                            <select id="groupCompanyFilter">
+                                <option value="">全部单位</option>
+                                <option value="company1">北京科技研究院</option>
+                                <option value="company2">上海贸易集团</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-default" onclick="searchGroup()">搜索</button>
+                        <button class="btn btn-primary" onclick="resetGroupSearch()">重置</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>课题组ID</th>
+                                <th>课题组名称</th>
+                                <th>暂估账单金额</th>
+                                <th>待确认金额</th>
+                                <th>待回款金额</th>
+                                <th>已回款金额</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="groupTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 单位账单页面 -->
+            <div id="page-company" class="page-section" style="display: none;">
+                <h1 class="page-title">🏢 单位账单</h1>
+                
+                <div class="search-bar">
+                    <div class="search-row">
+                        <div class="search-item">
+                            <label>单位名称：</label>
+                            <input type="text" id="companySearch" placeholder="请输入单位名称">
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-default" onclick="searchCompany()">搜索</button>
+                        <button class="btn btn-primary" onclick="resetCompanySearch()">重置</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>单位ID</th>
+                                <th>单位名称</th>
+                                <th>暂估账单金额</th>
+                                <th>待确认金额</th>
+                                <th>待回款金额</th>
+                                <th>已回款金额</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companyTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 全部账单页面 -->
+            <div id="page-all" class="page-section" style="display: none;">
+                <h1 class="page-title">📋 全部账单</h1>
+                
+                <div class="search-bar">
+                    <div class="search-row">
+                        <div class="search-item">
+                            <label>账单状态：</label>
+                            <select id="allStatusFilter">
+                                <option value="">全部状态</option>
+                                <option value="pending-estimate">暂估账单</option>
+                                <option value="pending-confirm">待确认账单</option>
+                                <option value="confirmed">已确认账单</option>
+                                <option value="pending-payment">待回款</option>
+                                <option value="paid">已回款</option>
+                                <option value="dispute">异议账单</option>
+                            </select>
+                        </div>
+                        <div class="search-item">
+                            <label>客户：</label>
+                            <select id="allCustomerFilter">
+                                <option value="">全部客户</option>
+                                <option value="customer1">北京科技有限公司</option>
+                                <option value="customer2">上海贸易集团</option>
+                                <option value="customer3">广州进出口公司</option>
+                                <option value="customer4">深圳电子有限公司</option>
+                            </select>
+                        </div>
+                        <div class="search-item">
+                            <label>账期：</label>
+                            <select id="allPeriodFilter">
+                                <option value="">全部账期</option>
+                                <option value="202605">2026年5月</option>
+                                <option value="202604">2026年4月</option>
+                                <option value="202603">2026年3月</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-default" onclick="searchAll()">重置</button>
+                        <button class="btn btn-primary" onclick="searchAll()">搜索</button>
+                    </div>
+                </div>
+                
+                <div class="action-bar">
+                    <div class="action-buttons">
+                        <button class="btn btn-default" id="allExport">📊 批量导出</button>
+                        <button class="btn btn-success" id="allRemind">💬 批量提醒</button>
+                    </div>
+                    <button class="btn btn-primary" id="allNew">+ 新建账单</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="allSelectAll"></th>
+                                <th>账单编号</th>
+                                <th>客户名称</th>
+                                <th>账期</th>
+                                <th>账单金额</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 异议账单页面 -->
+            <div id="page-dispute" class="page-section" style="display: none;">
+                <h1 class="page-title">⚠️ 异议账单</h1>
+                
+                <div class="search-bar">
+                    <div class="search-row">
+                        <div class="search-item">
+                            <label>客户：</label>
+                            <select id="disputeCustomerFilter">
+                                <option value="">全部客户</option>
+                                <option value="customer1">北京科技有限公司</option>
+                                <option value="customer4">深圳电子有限公司</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-default" onclick="searchDispute()">重置</button>
+                        <button class="btn btn-primary" onclick="searchDispute()">搜索</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>账单编号</th>
+                                <th>客户名称</th>
+                                <th>账期</th>
+                                <th>账单金额</th>
+                                <th>异议原因</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="disputeTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 客户详情页 -->
+            <div id="page-customer-detail" class="page-section" style="display: none;">
+                <div class="back-btn" onclick="backToCustomer()">← 返回客户列表</div>
+                
+                <h1 class="page-title" id="customerDetailTitle"></h1>
+                
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">暂估账单金额</span>
+                            <div class="stat-icon orange">📝</div>
+                        </div>
+                        <div class="stat-value" id="custPendingEstimate">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待确认金额</span>
+                            <div class="stat-icon yellow">⏳</div>
+                        </div>
+                        <div class="stat-value" id="custPendingConfirm">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待回款金额</span>
+                            <div class="stat-icon red">💳</div>
+                        </div>
+                        <div class="stat-value" id="custPendingPayment">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">已回款金额</span>
+                            <div class="stat-icon green">✅</div>
+                        </div>
+                        <div class="stat-value" id="custPaid">¥0.00</div>
+                    </div>
+                </div>
+                
+                <!-- 账期列表 -->
+                <div class="detail-section">
+                    <div class="section-header">
+                        <div class="section-title">账期账单列表</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="period-list" id="periodList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 课题组详情页 -->
+            <div id="page-group-detail" class="page-section" style="display: none;">
+                <div class="back-btn" onclick="backToGroup()">← 返回课题组列表</div>
+                
+                <h1 class="page-title" id="groupDetailTitle"></h1>
+                
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">暂估账单金额</span>
+                            <div class="stat-icon orange">📝</div>
+                        </div>
+                        <div class="stat-value" id="groupPendingEstimate">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待确认金额</span>
+                            <div class="stat-icon yellow">⏳</div>
+                        </div>
+                        <div class="stat-value" id="groupPendingConfirm">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待回款金额</span>
+                            <div class="stat-icon red">💳</div>
+                        </div>
+                        <div class="stat-value" id="groupPendingPayment">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">已回款金额</span>
+                            <div class="stat-icon green">✅</div>
+                        </div>
+                        <div class="stat-value" id="groupPaid">¥0.00</div>
+                    </div>
+                </div>
+                
+                <!-- 账期列表 -->
+                <div class="detail-section">
+                    <div class="section-header">
+                        <div class="section-title">账期账单列表</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="period-list" id="groupPeriodList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 单位详情页 -->
+            <div id="page-company-detail" class="page-section" style="display: none;">
+                <div class="back-btn" onclick="backToCompany()">← 返回单位列表</div>
+                
+                <h1 class="page-title" id="companyDetailTitle"></h1>
+                
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">暂估账单金额</span>
+                            <div class="stat-icon orange">📝</div>
+                        </div>
+                        <div class="stat-value" id="compPendingEstimate">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待确认金额</span>
+                            <div class="stat-icon yellow">⏳</div>
+                        </div>
+                        <div class="stat-value" id="compPendingConfirm">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">待回款金额</span>
+                            <div class="stat-icon red">💳</div>
+                        </div>
+                        <div class="stat-value" id="compPendingPayment">¥0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">已回款金额</span>
+                            <div class="stat-icon green">✅</div>
+                        </div>
+                        <div class="stat-value" id="compPaid">¥0.00</div>
+                    </div>
+                </div>
+                
+                <!-- 账期列表 -->
+                <div class="detail-section">
+                    <div class="section-header">
+                        <div class="section-title">账期账单列表</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="period-list" id="companyPeriodList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 账单详情页（出库单明细） -->
+            <div id="page-bill-detail" class="page-section" style="display: none;">
+                <div class="back-btn" id="billBackBtn" onclick="backToCustomerDetail()">← 返回客户详情</div>
+                
+                <div class="detail-header">
+                    <div class="detail-title" id="billDetailTitle">账单详情</div>
+                    <div class="detail-info" id="billDetailInfo">
+                    </div>
+                </div>
+                
+                <!-- 出库单列表 -->
+                <div class="detail-section">
+                    <div class="section-header">
+                        <div class="section-title">出库单列表</div>
+                        <button class="btn btn-primary btn-sm" id="addOutboundBtn">
+                            + 添加出库单
+                        </button>
+                    </div>
+                    <div class="section-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>出库单号</th>
+                                    <th>出库日期</th>
+                                    <th>金额</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="outboundTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 操作历史 -->
+                <div class="detail-section">
+                    <div class="section-header">
+                        <div class="section-title">操作历史</div>
+                    </div>
+                    <div class="section-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>操作时间</th>
+                                    <th>操作人</th>
+                                    <th>操作类型</th>
+                                    <th>备注</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 出库单操作弹窗 -->
+    <div class="modal-overlay" id="outboundModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="outboundModalTitle">计入下期账单</div>
+                <button class="modal-close" onclick="closeModal('outboundModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">
+                        原因 <span class="required">*</span>
+                    </label>
+                    <textarea class="form-textarea" id="outboundReason" placeholder="请输入原因（至少10个字）"></textarea>
+                    <div class="form-hint">原因不能为空，至少需要输入10个字</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">凭证（可选）</label>
+                    <input type="file" class="form-input" id="outboundVoucher" accept="image/*,.pdf">
+                    <div class="form-hint">支持上传图片或PDF文件作为凭证</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="closeModal('outboundModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitOutboundAction()">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const customersData = [
+            { id: 'C001', name: '北京科技有限公司', company: '北京科技研究院', group: '材料研究组', pendingEstimate: 0, pendingConfirm: 128500, pendingPayment: 0, paid: 156000 },
+            { id: 'C002', name: '上海贸易集团', company: '上海贸易集团', group: '采购部', pendingEstimate: 256800, pendingConfirm: 0, pendingPayment: 89600, paid: 0 },
+            { id: 'C003', name: '广州进出口公司', company: '广州高校联盟', group: '化学实验室', pendingEstimate: 0, pendingConfirm: 0, pendingPayment: 0, paid: 234000 },
+            { id: 'C004', name: '深圳电子有限公司', company: '深圳科技园', group: '研发中心', pendingEstimate: 78900, pendingConfirm: 0, pendingPayment: 0, paid: 0 }
+        ];
+        
+        const groupsData = [
+            { id: 'G001', name: '材料研究组', company: '北京科技研究院', pendingEstimate: 0, pendingConfirm: 128500, pendingPayment: 0, paid: 156000 },
+            { id: 'G002', name: '采购部', company: '上海贸易集团', pendingEstimate: 256800, pendingConfirm: 0, pendingPayment: 89600, paid: 0 },
+            { id: 'G003', name: '化学实验室', company: '广州高校联盟', pendingEstimate: 0, pendingConfirm: 0, pendingPayment: 0, paid: 234000 },
+            { id: 'G004', name: '研发中心', company: '深圳科技园', pendingEstimate: 78900, pendingConfirm: 0, pendingPayment: 0, paid: 0 }
+        ];
+        
+        const companiesData = [
+            { id: 'CO01', name: '北京科技研究院', pendingEstimate: 0, pendingConfirm: 128500, pendingPayment: 0, paid: 156000 },
+            { id: 'CO02', name: '上海贸易集团', pendingEstimate: 256800, pendingConfirm: 0, pendingPayment: 89600, paid: 0 },
+            { id: 'CO03', name: '广州高校联盟', pendingEstimate: 0, pendingConfirm: 0, pendingPayment: 0, paid: 234000 },
+            { id: 'CO04', name: '深圳科技园', pendingEstimate: 78900, pendingConfirm: 0, pendingPayment: 0, paid: 0 }
+        ];
+        
+        const billsData = [
+            { id: 'BILL202605001', customerId: 'C001', groupId: 'G001', companyId: 'CO01', customer: '北京科技有限公司', period: '2026年5月', amount: 128500, status: 'pending-confirm', statusText: '待确认账单', createTime: '2026-05-22 09:30:00', editable: true },
+            { id: 'BILL202605002', customerId: 'C002', groupId: 'G002', companyId: 'CO02', customer: '上海贸易集团', period: '2026年5月', amount: 256800, status: 'pending-estimate', statusText: '暂估账单', createTime: '2026-05-21 14:20:00', editable: true },
+            { id: 'BILL202604001', customerId: 'C002', groupId: 'G002', companyId: 'CO02', customer: '上海贸易集团', period: '2026年4月', amount: 89600, status: 'pending-payment', statusText: '待回款', createTime: '2026-04-30 08:00:00', editable: false },
+            { id: 'BILL202604002', customerId: 'C001', groupId: 'G001', companyId: 'CO01', customer: '北京科技有限公司', period: '2026年4月', amount: 156000, status: 'paid', statusText: '已回款', createTime: '2026-04-28 16:45:00', editable: false },
+            { id: 'BILL202605003', customerId: 'C004', groupId: 'G004', companyId: 'CO04', customer: '深圳电子有限公司', period: '2026年5月', amount: 78900, status: 'dispute', statusText: '异议账单', disputeReason: '客户对部分出库单有异议', createTime: '2026-05-20 11:15:00', editable: false },
+            { id: 'BILL202603001', customerId: 'C003', groupId: 'G003', companyId: 'CO03', customer: '广州进出口公司', period: '2026年3月', amount: 234000, status: 'paid', statusText: '已回款', createTime: '2026-03-25 10:30:00', editable: false }
+        ];
+        
+        const outboundsData = [
+            { id: 'OUT202605001', billId: 'BILL202605001', date: '2026-05-15', amount: 45000, status: 'normal', statusText: '正常' },
+            { id: 'OUT202605002', billId: 'BILL202605001', date: '2026-05-16', amount: 38500, status: 'normal', statusText: '正常' },
+            { id: 'OUT202605003', billId: 'BILL202605001', date: '2026-05-18', amount: 45000, status: 'exclude', statusText: '不计费' }
+        ];
+        
+        const historyData = [
+            { time: '2026-05-22 09:30:00', operator: '张三', type: '生成暂估账单', remark: '系统自动生成' },
+            { time: '2026-05-22 10:15:00', operator: '张三', type: '调整出库单', remark: '出库单OUT202605003标记为不计费，原因：客户要求调整' }
+        ];
+        
+        let currentCustomer = null;
+        let currentGroup = null;
+        let currentCompany = null;
+        let currentBill = null;
+        let currentOutboundAction = null;
+        let currentOutboundId = null;
+        let previousPage = null; // 用于跟踪账单详情页是从哪里进入的
+        
+        // 获取状态标签类名
+        function getStatusClass(status) {
+            const statusMap = {
+                'pending-estimate': 'status-pending-estimate',
+                'pending-confirm': 'status-pending-confirm',
+                'confirmed': 'status-confirmed',
+                'pending-payment': 'status-pending-payment',
+                'paid': 'status-paid',
+                'dispute': 'status-dispute'
+            };
+            return statusMap[status] || '';
+        }
+        
+        // 获取状态背景色
+        function getStatusBg(status) {
+            const bgMap = {
+                'pending-estimate': 'background: #FEF3C7; color: #D97706;',
+                'pending-confirm': 'background: #FFF8E1; color: #F57C00;',
+                'confirmed': 'background: #E8F5E9; color: #388E3C;',
+                'pending-payment': 'background: #FFEBEE; color: #D32F2F;',
+                'paid': 'background: #E3F2FD; color: #1976D2;',
+                'dispute': 'background: #F5F5F5; color: #616161;'
+            };
+            return bgMap[status] || '';
+        }
+        
+        // 切换页面
+        function switchPage(pageType) {
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('menu-' + pageType).classList.add('active');
+            
+            document.querySelectorAll('.page-section').forEach(section => section.style.display = 'none');
+            document.getElementById('page-' + pageType).style.display = 'block';
+            
+            if (pageType === 'customer') renderCustomerTable();
+            else if (pageType === 'group') renderGroupTable();
+            else if (pageType === 'company') renderCompanyTable();
+            else if (pageType === 'all') renderAllTable();
+            else if (pageType === 'dispute') renderDisputeTable();
+        }
+        
+        // 渲染客户账单列表
+        function renderCustomerTable() {
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = customersData.map(customer => `
+                <tr>
+                    <td>${customer.id}</td>
+                    <td>${customer.name}</td>
+                    <td>¥${customer.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="table-btn table-btn-view" onclick="viewCustomerDetail('${customer.id}')">查看账单</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染课题组账单列表
+        function renderGroupTable() {
+            const tbody = document.getElementById('groupTableBody');
+            tbody.innerHTML = groupsData.map(group => `
+                <tr>
+                    <td>${group.id}</td>
+                    <td>${group.name}</td>
+                    <td>¥${group.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="table-btn table-btn-view" onclick="viewGroupDetail('${group.id}')">查看账单</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染单位账单列表
+        function renderCompanyTable() {
+            const tbody = document.getElementById('companyTableBody');
+            tbody.innerHTML = companiesData.map(company => `
+                <tr>
+                    <td>${company.id}</td>
+                    <td>${company.name}</td>
+                    <td>¥${company.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="table-btn table-btn-view" onclick="viewCompanyDetail('${company.id}')">查看账单</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 渲染全部账单列表
+        function renderAllTable() {
+            const tbody = document.getElementById('allTableBody');
+            tbody.innerHTML = billsData.map(bill => `
+                <tr>
+                    <td><input type="checkbox" class="bill-checkbox" data-id="${bill.id}"></td>
+                    <td>${bill.id}</td>
+                    <td>${bill.customer}</td>
+                    <td>${bill.period}</td>
+                    <td>¥${bill.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td><span class="status-tag ${getStatusClass(bill.status)}">${bill.statusText}</span></td>
+                    <td>${bill.createTime}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn table-btn-view" onclick="viewBillDetail('${bill.id}')">查看</button>
+                            ${getAllBillActions(bill)}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 获取全部账单操作按钮
+        function getAllBillActions(bill) {
+            let buttons = '';
+            switch(bill.status) {
+                case 'pending-estimate':
+                    buttons = `<button class="table-btn table-btn-action" onclick="changeBillStatus('${bill.id}', 'confirm')">确认</button>`;
+                    break;
+                case 'pending-confirm':
+                    buttons = `
+                        <button class="table-btn table-btn-action" onclick="changeBillStatus('${bill.id}', 'confirm')">确认</button>
+                        <button class="table-btn table-btn-warning" onclick="changeBillStatus('${bill.id}', 'dispute')">标记异议</button>
+                    `;
+                    break;
+                case 'confirmed':
+                    buttons = `<button class="table-btn table-btn-warning" onclick="changeBillStatus('${bill.id}', 'dispute')">标记异议</button>`;
+                    break;
+                case 'pending-payment':
+                    buttons = `
+                        <button class="table-btn table-btn-action" onclick="changeBillStatus('${bill.id}', 'paid')">回款</button>
+                        <button class="table-btn table-btn-warning" onclick="changeBillStatus('${bill.id}', 'dispute')">标记异议</button>
+                    `;
+                    break;
+                case 'dispute':
+                    buttons = `<button class="table-btn table-btn-action" onclick="changeBillStatus('${bill.id}', 'resolve')">处理异议</button>`;
+                    break;
+            }
+            return buttons;
+        }
+        
+        // 渲染异议账单列表
+        function renderDisputeTable() {
+            const disputeBills = billsData.filter(b => b.status === 'dispute');
+            const tbody = document.getElementById('disputeTableBody');
+            tbody.innerHTML = disputeBills.map(bill => `
+                <tr>
+                    <td>${bill.id}</td>
+                    <td>${bill.customer}</td>
+                    <td>${bill.period}</td>
+                    <td>¥${bill.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>${bill.disputeReason || '-'}</td>
+                    <td>${bill.createTime}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn table-btn-view" onclick="viewBillDetail('${bill.id}')">查看</button>
+                            <button class="table-btn table-btn-action" onclick="changeBillStatus('${bill.id}', 'resolve')">处理异议</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 查看客户详情
+        function viewCustomerDetail(customerId) {
+            currentCustomer = customersData.find(c => c.id === customerId);
+            if (!currentCustomer) return;
+            
+            previousPage = 'customer';
+            document.getElementById('page-customer').style.display = 'none';
+            document.getElementById('page-customer-detail').style.display = 'block';
+            
+            document.getElementById('customerDetailTitle').textContent = `客户详情 - ${currentCustomer.name}`;
+            
+            document.getElementById('custPendingEstimate').textContent = '¥' + currentCustomer.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('custPendingConfirm').textContent = '¥' + currentCustomer.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('custPendingPayment').textContent = '¥' + currentCustomer.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('custPaid').textContent = '¥' + currentCustomer.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            
+            // 获取该客户的账期账单
+            const customerBills = billsData.filter(b => b.customerId === customerId);
+            const periods = [...new Set(customerBills.map(b => b.period))];
+            
+            const periodList = document.getElementById('periodList');
+            periodList.innerHTML = periods.map(period => {
+                const periodBills = customerBills.filter(b => b.period === period);
+                const totalAmount = periodBills.reduce((sum, b) => sum + b.amount, 0);
+                const latestBill = periodBills[0];
+                
+                return `
+                    <div class="period-card" onclick="viewBillDetail('${latestBill.id}')">
+                        <div class="period-header">
+                            <span class="period-name">${period}</span>
+                            <span class="period-status" style="${getStatusBg(latestBill.status)}">${latestBill.statusText}</span>
+                        </div>
+                        <div class="period-amount">¥${totalAmount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+                        <div class="period-meta">${periodBills.length} 张账单</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 返回客户列表
+        function backToCustomer() {
+            document.getElementById('page-customer-detail').style.display = 'none';
+            document.getElementById('page-customer').style.display = 'block';
+        }
+        
+        // 返回客户详情
+        function backToCustomerDetail() {
+            document.getElementById('page-bill-detail').style.display = 'none';
+            document.getElementById('page-customer-detail').style.display = 'block';
+        }
+        
+        // 返回课题组详情
+        function backToGroupDetail() {
+            document.getElementById('page-bill-detail').style.display = 'none';
+            document.getElementById('page-group-detail').style.display = 'block';
+        }
+        
+        // 返回单位详情
+        function backToCompanyDetail() {
+            document.getElementById('page-bill-detail').style.display = 'none';
+            document.getElementById('page-company-detail').style.display = 'block';
+        }
+        
+        // 查看课题组详情
+        function viewGroupDetail(groupId) {
+            currentGroup = groupsData.find(g => g.id === groupId);
+            if (!currentGroup) return;
+            
+            previousPage = 'group';
+            document.getElementById('page-group').style.display = 'none';
+            document.getElementById('page-group-detail').style.display = 'block';
+            
+            document.getElementById('groupDetailTitle').textContent = `课题组详情 - ${currentGroup.name}`;
+            
+            document.getElementById('groupPendingEstimate').textContent = '¥' + currentGroup.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('groupPendingConfirm').textContent = '¥' + currentGroup.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('groupPendingPayment').textContent = '¥' + currentGroup.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('groupPaid').textContent = '¥' + currentGroup.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            
+            // 获取该课题组的账期账单
+            const groupBills = billsData.filter(b => b.groupId === groupId);
+            const periods = [...new Set(groupBills.map(b => b.period))];
+            
+            const periodList = document.getElementById('groupPeriodList');
+            periodList.innerHTML = periods.map(period => {
+                const periodBills = groupBills.filter(b => b.period === period);
+                const totalAmount = periodBills.reduce((sum, b) => sum + b.amount, 0);
+                const latestBill = periodBills[0];
+                
+                return `
+                    <div class="period-card" onclick="viewBillDetail('${latestBill.id}')">
+                        <div class="period-header">
+                            <span class="period-name">${period}</span>
+                            <span class="period-status" style="${getStatusBg(latestBill.status)}">${latestBill.statusText}</span>
+                        </div>
+                        <div class="period-amount">¥${totalAmount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+                        <div class="period-meta">${periodBills.length} 张账单</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 返回课题组列表
+        function backToGroup() {
+            document.getElementById('page-group-detail').style.display = 'none';
+            document.getElementById('page-group').style.display = 'block';
+        }
+        
+        // 查看单位详情
+        function viewCompanyDetail(companyId) {
+            currentCompany = companiesData.find(c => c.id === companyId);
+            if (!currentCompany) return;
+            
+            previousPage = 'company';
+            document.getElementById('page-company').style.display = 'none';
+            document.getElementById('page-company-detail').style.display = 'block';
+            
+            document.getElementById('companyDetailTitle').textContent = `单位详情 - ${currentCompany.name}`;
+            
+            document.getElementById('compPendingEstimate').textContent = '¥' + currentCompany.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('compPendingConfirm').textContent = '¥' + currentCompany.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('compPendingPayment').textContent = '¥' + currentCompany.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            document.getElementById('compPaid').textContent = '¥' + currentCompany.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
+            
+            // 获取该单位的账期账单
+            const companyBills = billsData.filter(b => b.companyId === companyId);
+            const periods = [...new Set(companyBills.map(b => b.period))];
+            
+            const periodList = document.getElementById('companyPeriodList');
+            periodList.innerHTML = periods.map(period => {
+                const periodBills = companyBills.filter(b => b.period === period);
+                const totalAmount = periodBills.reduce((sum, b) => sum + b.amount, 0);
+                const latestBill = periodBills[0];
+                
+                return `
+                    <div class="period-card" onclick="viewBillDetail('${latestBill.id}')">
+                        <div class="period-header">
+                            <span class="period-name">${period}</span>
+                            <span class="period-status" style="${getStatusBg(latestBill.status)}">${latestBill.statusText}</span>
+                        </div>
+                        <div class="period-amount">¥${totalAmount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+                        <div class="period-meta">${periodBills.length} 张账单</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 返回单位列表
+        function backToCompany() {
+            document.getElementById('page-company-detail').style.display = 'none';
+            document.getElementById('page-company').style.display = 'block';
+        }
+        
+        // 查看账单详情
+        function viewBillDetail(billId) {
+            currentBill = billsData.find(b => b.id === billId);
+            if (!currentBill) return;
+            
+            // 隐藏之前的详情页
+            document.getElementById('page-customer-detail').style.display = 'none';
+            document.getElementById('page-group-detail').style.display = 'none';
+            document.getElementById('page-company-detail').style.display = 'none';
+            document.getElementById('page-bill-detail').style.display = 'block';
+            
+            // 根据上一页来源设置返回按钮文本和行为
+            const backBtn = document.getElementById('billBackBtn');
+            let backText = '← 返回客户详情';
+            let backAction = 'backToCustomerDetail()';
+            
+            if (previousPage === 'group') {
+                backText = '← 返回课题组详情';
+                backAction = 'backToGroupDetail()';
+            } else if (previousPage === 'company') {
+                backText = '← 返回单位详情';
+                backAction = 'backToCompanyDetail()';
+            }
+            
+            backBtn.textContent = backText;
+            backBtn.setAttribute('onclick', backAction);
+            
+            document.getElementById('billDetailTitle').textContent = `账单详情 - ${currentBill.id}`;
+            document.getElementById('billDetailInfo').innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">客户名称</div>
+                    <div class="info-value">${currentBill.customer}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">账期</div>
+                    <div class="info-value">${currentBill.period}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">账单金额</div>
+                    <div class="info-value">¥${currentBill.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">状态</div>
+                    <div class="info-value"><span class="status-tag ${getStatusClass(currentBill.status)}">${currentBill.statusText}</span></div>
+                </div>
+            `;
+            
+            renderOutboundTable();
+            renderHistoryTable();
+        }
+        
+        // 渲染出库单列表
+        function renderOutboundTable() {
+            const tbody = document.getElementById('outboundTableBody');
+            const billOutbounds = outboundsData.filter(o => o.billId === currentBill.id);
+            tbody.innerHTML = billOutbounds.map(ob => `
+                <tr>
+                    <td>${ob.id}</td>
+                    <td>${ob.date}</td>
+                    <td class="${ob.status === 'exclude' ? 'amount-strikethrough' : ''}">¥${ob.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>${ob.statusText}</td>
+                    <td>
+                        <div class="table-actions">
+                            ${currentBill.editable ? getOutboundActions(ob) : '-'}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 获取出库单操作按钮
+        function getOutboundActions(ob) {
+            if (ob.status === 'normal') {
+                return `
+                    <button class="table-btn table-btn-warning" onclick="openOutboundModal('nextPeriod', '${ob.id}')">计入下期</button>
+                    <button class="table-btn table-btn-danger" onclick="openOutboundModal('exclude', '${ob.id}')">标记不计费</button>
+                `;
+            } else if (ob.status === 'exclude') {
+                return `<button class="table-btn table-btn-action" onclick="restoreOutbound('${ob.id}')">恢复计费</button>`;
+            }
+            return '-';
+        }
+        
+        // 渲染历史记录
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = historyData.map(h => `
+                <tr>
+                    <td>${h.time}</td>
+                    <td>${h.operator}</td>
+                    <td>${h.type}</td>
+                    <td>${h.remark}</td>
+                </tr>
+            `).join('');
+        }
+        
+        // 打开出库单操作弹窗
+        function openOutboundModal(action, outboundId) {
+            currentOutboundAction = action;
+            currentOutboundId = outboundId;
+            
+            const title = action === 'nextPeriod' ? '计入下期账单' : '标记不计费';
+            document.getElementById('outboundModalTitle').textContent = title;
+            document.getElementById('outboundReason').value = '';
+            document.getElementById('outboundVoucher').value = '';
+            
+            document.getElementById('outboundModal').classList.add('show');
+        }
+        
+        // 提交出库单操作
+        function submitOutboundAction() {
+            const reason = document.getElementById('outboundReason').value.trim();
+            
+            if (!reason || reason.length < 10) {
+                alert('原因不能为空，且至少需要输入10个字');
+                return;
+            }
+            
+            const ob = outboundsData.find(o => o.id === currentOutboundId);
+            if (ob) {
+                if (currentOutboundAction === 'nextPeriod') {
+                    ob.status = 'next-period';
+                    ob.statusText = '下期账单';
+                } else {
+                    ob.status = 'exclude';
+                    ob.statusText = '不计费';
+                }
+            }
+            
+            closeModal('outboundModal');
+            renderOutboundTable();
+            alert('操作成功！');
+        }
+        
+        // 恢复出库单
+        function restoreOutbound(outboundId) {
+            const ob = outboundsData.find(o => o.id === outboundId);
+            if (ob) {
+                ob.status = 'normal';
+                ob.statusText = '正常';
+            }
+            renderOutboundTable();
+        }
+        
+        // 关闭弹窗
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+        
+        // 状态变更
+        function changeBillStatus(billId, action) {
+            const bill = billsData.find(b => b.id === billId);
+            if (!bill) return;
+            
+            let newStatus = '';
+            let newStatusText = '';
+            
+            switch(action) {
+                case 'confirm':
+                    newStatus = bill.status === 'pending-estimate' ? 'confirmed' : 'confirmed';
+                    newStatusText = '已确认账单';
+                    break;
+                case 'paid':
+                    newStatus = 'paid';
+                    newStatusText = '已回款';
+                    break;
+                case 'dispute':
+                    newStatus = 'dispute';
+                    newStatusText = '异议账单';
+                    break;
+                case 'resolve':
+                    newStatus = 'pending-confirm';
+                    newStatusText = '待确认账单';
+                    bill.editable = true;
+                    break;
+            }
+            
+            bill.status = newStatus;
+            bill.statusText = newStatusText;
+            
+            if (action === 'confirm') {
+                bill.editable = false;
+            }
+            
+            if (action === 'dispute' || action === 'resolve') {
+                renderDisputeTable();
+            }
+            
+            if (action === 'confirm' || action === 'paid' || action === 'dispute') {
+                renderAllTable();
+            }
+            
+            alert('操作成功！');
+        }
+        
+        // 搜索功能
+        function searchCustomer() {
+            const search = document.getElementById('customerSearch').value.toLowerCase();
+            const company = document.getElementById('customerCompanyFilter').value;
+            const tbody = document.getElementById('customerTableBody');
+            const filtered = customersData.filter(c => 
+                (search === '' || c.name.toLowerCase().includes(search)) &&
+                (company === '' || c.company.includes(company.replace('company', '')))
+            );
+            tbody.innerHTML = filtered.map(customer => `
+                <tr>
+                    <td>${customer.id}</td>
+                    <td>${customer.name}</td>
+                    <td>¥${customer.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${customer.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="table-btn table-btn-view" onclick="viewCustomerDetail('${customer.id}')">查看账单</button>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('customerTotal').textContent = filtered.length;
+        }
+        
+        function resetCustomerSearch() {
+            document.getElementById('customerSearch').value = '';
+            document.getElementById('customerCompanyFilter').value = '';
+            renderCustomerTable();
+        }
+        
+        function searchGroup() {
+            const search = document.getElementById('groupSearch').value.toLowerCase();
+            const tbody = document.getElementById('groupTableBody');
+            const filtered = groupsData.filter(g => g.name.toLowerCase().includes(search));
+            tbody.innerHTML = filtered.map(group => `
+                <tr>
+                    <td>${group.id}</td>
+                    <td>${group.name}</td>
+                    <td>¥${group.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${group.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td><button class="table-btn table-btn-view" onclick="viewGroupDetail('${group.id}')">查看账单</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function resetGroupSearch() {
+            document.getElementById('groupSearch').value = '';
+            renderGroupTable();
+        }
+        
+        function searchCompany() {
+            const search = document.getElementById('companySearch').value.toLowerCase();
+            const tbody = document.getElementById('companyTableBody');
+            const filtered = companiesData.filter(c => c.name.toLowerCase().includes(search));
+            tbody.innerHTML = filtered.map(company => `
+                <tr>
+                    <td>${company.id}</td>
+                    <td>${company.name}</td>
+                    <td>¥${company.pendingEstimate.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.pendingConfirm.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.pendingPayment.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td>¥${company.paid.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</td>
+                    <td><button class="table-btn table-btn-view" onclick="viewCompanyDetail('${company.id}')">查看账单</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function resetCompanySearch() {
+            document.getElementById('companySearch').value = '';
+            renderCompanyTable();
+        }
+        
+        function searchAll() {
+            renderAllTable();
+        }
+        
+        function searchDispute() {
+            renderDisputeTable();
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCustomerTable();
+            
+            // 全选
+            const allSelectAll = document.getElementById('allSelectAll');
+            if (allSelectAll) {
+                allSelectAll.addEventListener('change', function() {
+                    const checkboxes = document.querySelectorAll('.bill-checkbox');
+                    checkboxes.forEach(cb => cb.checked = this.checked);
+                });
+            }
+            
+            // 批量提醒
+            const allRemind = document.getElementById('allRemind');
+            if (allRemind) {
+                allRemind.addEventListener('click', function() {
+                    const selected = document.querySelectorAll('.bill-checkbox:checked');
+                    if (selected.length === 0) {
+                        alert('请先选择要提醒的账单');
+                        return;
+                    }
+                    alert('批量提醒功能演示');
+                });
+            }
+            
+            // 批量导出
+            const allExport = document.getElementById('allExport');
+            if (allExport) {
+                allExport.addEventListener('click', function() {
+                    const selected = document.querySelectorAll('.bill-checkbox:checked');
+                    if (selected.length === 0) {
+                        alert('请先选择要导出的账单');
+                        return;
+                    }
+                    alert('批量导出功能演示');
+                });
+            }
+            
+            // 新建账单
+            const allNew = document.getElementById('allNew');
+            if (allNew) {
+                allNew.addEventListener('click', function() {
+                    alert('新建账单功能演示');
+                });
+            }
+            
+            // 添加出库单
+            const addOutboundBtn = document.getElementById('addOutboundBtn');
+            if (addOutboundBtn) {
+                addOutboundBtn.addEventListener('click', function() {
+                    alert('添加出库单功能演示');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
