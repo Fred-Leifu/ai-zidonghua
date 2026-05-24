@@ -5,725 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>项目文件导航</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 {
-            color: white;
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .header p {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 14px;
-        }
-        .tree-wrapper {
-            padding: 30px;
-        }
-        .tree {
-            list-style: none;
-        }
-        .tree li {
-            position: relative;
-            padding-left: 24px;
-            line-height: 2;
-        }
-        .tree li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 14px;
-            width: 12px;
-            height: 1px;
-            background: #ddd;
-        }
-        .tree li::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 2px;
-            width: 1px;
-            height: 100%;
-            background: #ddd;
-        }
-        .tree li:last-child::after {
-            height: 13px;
-        }
-        .tree li.folder {
-            padding-left: 0;
-        }
-        .tree li.folder::before,
-        .tree li.folder::after {
-            display: none;
-        }
-        .tree li.folder > .item-wrapper {
-            padding-left: 24px;
-        }
-        .folder-toggle {
-            position: absolute;
-            left: 0;
-            top: 8px;
-            width: 16px;
-            height: 16px;
-            border: none;
-            background: #667eea;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .folder-toggle:hover {
-            background: #764ba2;
-        }
-        .folder-toggle.open {
-            transform: rotate(90deg);
-        }
-        .item-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-        .item-wrapper:hover {
-            background-color: #f8f9fa;
-        }
-        .icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        .icon-folder {
-            background: #ffd43b;
-            color: #8b5cf6;
-        }
-        .icon-folder-open {
-            background: #8b5cf6;
-            color: #ffd43b;
-        }
-        .icon-file {
-            background: #e0e7ff;
-            color: #6366f1;
-        }
-        .icon-html {
-            background: #fed7aa;
-            color: #ea580c;
-        }
-        .icon-md {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-        .icon-js {
-            background: #fef3c7;
-            color: #d97706;
-        }
-        .file-name {
-            flex: 1;
-            font-size: 14px;
-            color: #333;
-        }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            background: #10b981;
-            color: white;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .copy-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
-        }
-        .copy-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.6);
-        }
-        .copy-btn.copied {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
-        }
-        .copy-btn svg {
-            width: 12px;
-            height: 12px;
-        }
-        .open-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 12px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
-        }
-        .open-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.6);
-        }
-        .open-btn svg {
-            width: 12px;
-            height: 12px;
-        }
-        .folder-content {
-            display: none;
-            margin-left: 16px;
-        }
-        .folder-content.open {
-            display: block;
-        }
-        .footer {
-            background: #f8f9fa;
-            padding: 20px 30px;
-            text-align: center;
-            color: #6c757d;
-            font-size: 13px;
-        }
-        .footer a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        .search-container {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .search-box {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 14px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            outline: none;
-            transition: all 0.2s;
-            background: white;
-        }
-        .search-box:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .search-box::placeholder {
-            color: #adb5bd;
-        }
-        .search-results {
-            margin-bottom: 10px;
-            font-size: 12px;
-            color: #6c757d;
-        }
-        .search-results .highlight {
-            background: #fef08a;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #9ca3af;
-        }
-        .no-results svg {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-        .match {
-            background: #fef08a !important;
-        }
-        .hidden {
-            display: none !important;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 30px; text-align: center; }
+        .header h1 { color: white; font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+        .header p { color: rgba(255,255,255,0.85); font-size: 14px; }
+        .tree-wrapper { padding: 30px; }
+        .tree { list-style: none; }
+        .tree li { position: relative; padding-left: 24px; line-height: 2; }
+        .tree li::before { content: ''; position: absolute; left: 0; top: 14px; width: 12px; height: 1px; background: #ddd; }
+        .tree li::after { content: ''; position: absolute; left: 0; top: 2px; width: 1px; height: 100%; background: #ddd; }
+        .tree li:last-child::after { height: 13px; }
+        .tree li.folder { padding-left: 0; }
+        .tree li.folder::before, .tree li.folder::after { display: none; }
+        .tree li.folder > .item-wrapper { padding-left: 24px; }
+        .folder-toggle { position: absolute; left: 0; top: 8px; width: 16px; height: 16px; border: none; background: #667eea; color: white; border-radius: 4px; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .folder-toggle:hover { background: #764ba2; }
+        .folder-toggle.open { transform: rotate(90deg); }
+        .item-wrapper { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; transition: background-color 0.2s; }
+        .item-wrapper:hover { background-color: #f8f9fa; }
+        .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .icon-folder { background: #ffd43b; color: #8b5cf6; }
+        .icon-folder-open { background: #8b5cf6; color: #ffd43b; }
+        .icon-file { background: #e0e7ff; color: #6366f1; }
+        .icon-html { background: #fed7aa; color: #ea580c; }
+        .icon-md { background: #dbeafe; color: #2563eb; }
+        .icon-js { background: #fef3c7; color: #d97706; }
+        .icon-bat { background: #dcfce7; color: #16a34a; }
+        .file-name { flex: 1; font-size: 14px; color: #333; }
+        .badge { display: inline-block; padding: 2px 8px; background: #10b981; color: white; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .copy-btn, .open-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .copy-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 2px 6px rgba(102,126,234,0.4); }
+        .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(102,126,234,0.6); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 2px 6px rgba(16,185,129,0.4); }
+        .open-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 2px 6px rgba(16,185,129,0.4); }
+        .open-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(16,185,129,0.6); }
+        .folder-content { display: none; margin-left: 16px; }
+        .folder-content.open { display: block; }
+        .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; color: #6c757d; font-size: 13px; }
+        .footer a { color: #3b82f6; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .search-container { padding: 20px 30px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+        .search-box { width: 100%; padding: 12px 16px; font-size: 14px; border: 2px solid #e9ecef; border-radius: 10px; outline: none; transition: all 0.2s; }
+        .search-box:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .search-results { margin-bottom: 10px; font-size: 12px; color: #6c757d; }
+        .search-results .highlight { background: #fef08a; padding: 2px 4px; border-radius: 3px; }
+        .match { background: #fef08a !important; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📁 项目文件导航</h1>
-            <p>点击文件夹图标展开/折叠，点击复制按钮复制访问地址</p>
-        </div>
-        
-        <div class="search-container">
-            <div class="search-results" id="searchResults"></div>
-            <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索文件名...">
-        </div>
-        
+        <div class="header"><h1>📁 项目文件导航</h1><p>点击文件夹图标展开/折叠，点击复制按钮复制访问地址</p></div>
+        <div class="search-container"><div class="search-results" id="searchResults"></div><input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索文件名..."></div>
         <div class="tree-wrapper">
             <ul class="tree">
-                <li class="folder">
+                <li>
                     <div class="item-wrapper">
-                        <button class="folder-toggle">▶</button>
-                        <span class="icon icon-folder">📂</span>
-                        <span class="file-name">docs/ <span class="badge">文档目录</span></span>
+                        <span class="icon icon-md">📝</span>
+                        <span class="file-name">README.md <span class="badge">项目说明</span></span>
+                        <button class="copy-btn" data-url="README.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button>
+                        <button class="open-btn" data-url="README.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button>
                     </div>
+                </li>
+                <li class="folder">
+                    <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">docs/ <span class="badge">文档目录</span></span></div>
                     <ul class="folder-content">
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">GIT_CONFIG.md <span class="badge">配置记录</span></span>
-                                <button class="copy-btn" data-url="docs/GIT_CONFIG.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="docs/GIT_CONFIG.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">GIT_GUIDE.md <span class="badge">使用指南</span></span>
-                                <button class="copy-btn" data-url="docs/GIT_GUIDE.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="docs/GIT_GUIDE.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">需求文档</span></span>
-                                <button class="copy-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">部署历史记录.md <span class="badge">部署记录</span></span>
-                                <button class="copy-btn" data-url="docs/部署历史记录.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="docs/部署历史记录.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
+                        <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">GIT_CONFIG.md <span class="badge">配置记录</span></span><button class="copy-btn" data-url="docs/GIT_CONFIG.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="docs/GIT_CONFIG.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                        <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">GIT_GUIDE.md <span class="badge">使用指南</span></span><button class="copy-btn" data-url="docs/GIT_GUIDE.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="docs/GIT_GUIDE.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                        <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">PRD-存货商品开票数量生成器-功能规则说明.md <span class="badge">需求文档</span></span><button class="copy-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="docs/PRD-存货商品开票数量生成器-功能规则说明.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                        <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">部署历史记录.md <span class="badge">部署记录</span></span><button class="copy-btn" data-url="docs/部署历史记录.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="docs/部署历史记录.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                        <li><div class="item-wrapper"><span class="icon icon-bat">⚙️</span><span class="file-name">部署到GitHub.bat <span class="badge">部署脚本</span></span><button class="copy-btn" data-url="docs/部署到GitHub.bat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="docs/部署到GitHub.bat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
                     </ul>
                 </li>
-                
                 <li class="folder">
-                    <div class="item-wrapper">
-                        <button class="folder-toggle">▶</button>
-                        <span class="icon icon-folder">📂</span>
-                        <span class="file-name">html/ <span class="badge">HTML页面</span></span>
-                    </div>
+                    <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">html/ <span class="badge">HTML页面</span></span></div>
                     <ul class="folder-content">
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-html">🌐</span>
-                                <span class="file-name">invoice-calculator.html <span class="badge">开票计算器</span></span>
-                                <button class="copy-btn" data-url="html/invoice-calculator.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="html/invoice-calculator.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-html">🌐</span>
-                                <span class="file-name">test.html <span class="badge">测试页面</span></span>
-                                <button class="copy-btn" data-url="html/test.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="html/test.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
+                        <li><div class="item-wrapper"><span class="icon icon-html">🌐</span><span class="file-name">invoice-calculator.html <span class="badge">开票计算器</span></span><button class="copy-btn" data-url="html/invoice-calculator.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="html/invoice-calculator.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
                     </ul>
                 </li>
-                
                 <li class="folder">
-                    <div class="item-wrapper">
-                        <button class="folder-toggle">▶</button>
-                        <span class="icon icon-folder">📂</span>
-                        <span class="file-name">scripts/ <span class="badge">脚本目录</span></span>
-                    </div>
+                    <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">scripts/ <span class="badge">脚本目录</span></span></div>
                     <ul class="folder-content">
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-js">⚙️</span>
-                                <span class="file-name">deploy.js <span class="badge">部署脚本</span></span>
-                                <button class="copy-btn" data-url="scripts/deploy.js">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="scripts/deploy.js">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
+                        <li><div class="item-wrapper"><span class="icon icon-js">⚙️</span><span class="file-name">deploy.js <span class="badge">部署脚本</span></span><button class="copy-btn" data-url="scripts/deploy.js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="scripts/deploy.js"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
                     </ul>
                 </li>
-                
                 <li class="folder">
-                    <div class="item-wrapper">
-                        <button class="folder-toggle">▶</button>
-                        <span class="icon icon-folder">📂</span>
-                        <span class="file-name">销售综合管理系统原型/ <span class="badge">原型项目</span></span>
-                    </div>
+                    <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">销售综合管理系统原型/ <span class="badge">原型项目</span></span></div>
                     <ul class="folder-content">
                         <li class="folder">
-                            <div class="item-wrapper">
-                                <button class="folder-toggle">▶</button>
-                                <span class="icon icon-folder">📂</span>
-                                <span class="file-name">img/ <span class="badge">图片资源</span></span>
-                            </div>
+                            <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">docs/ <span class="badge">文档目录</span></span></div>
                             <ul class="folder-content">
-                                <li>
-                                    <div class="item-wrapper">
-                                        <span class="icon icon-file">📄</span>
-                                        <span class="file-name">界面布局及UI参考.png</span>
-                                        <button class="copy-btn" data-url="销售综合管理系统原型/img/界面布局及UI参考.png">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                            </svg>
-                                            复制
-                                        </button>
-                                        <button class="open-btn" data-url="销售综合管理系统原型/img/界面布局及UI参考.png">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                <polyline points="15 3 21 3 21 9"></polyline>
-                                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                                            </svg>
-                                            访问
-                                        </button>
-                                    </div>
-                                </li>
+                                <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">PRD-账单管理模块.md <span class="badge">需求文档</span></span><button class="copy-btn" data-url="销售综合管理系统原型/docs/PRD-账单管理模块.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="销售综合管理系统原型/docs/PRD-账单管理模块.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                                <li><div class="item-wrapper"><span class="icon icon-md">📝</span><span class="file-name">页面规则-账单管理.md <span class="badge">页面规则</span></span><button class="copy-btn" data-url="销售综合管理系统原型/docs/页面规则-账单管理.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="销售综合管理系统原型/docs/页面规则-账单管理.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
                             </ul>
                         </li>
                         <li class="folder">
-                            <div class="item-wrapper">
-                                <button class="folder-toggle">▶</button>
-                                <span class="icon icon-folder">📂</span>
-                                <span class="file-name">pages/ <span class="badge">页面文件</span></span>
-                            </div>
+                            <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">img/ <span class="badge">图片资源</span></span></div>
                             <ul class="folder-content">
-                                <li>
-                                    <div class="item-wrapper">
-                                        <span class="icon icon-html">🌐</span>
-                                        <span class="file-name">bill-management.html <span class="badge">账单管理</span></span>
-                                        <button class="copy-btn" data-url="销售综合管理系统原型/pages/bill-management.html">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                            </svg>
-                                            复制
-                                        </button>
-                                        <button class="open-btn" data-url="销售综合管理系统原型/pages/bill-management.html">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                <polyline points="15 3 21 3 21 9"></polyline>
-                                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                                            </svg>
-                                            访问
-                                        </button>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-wrapper">
-                                        <span class="icon icon-html">🌐</span>
-                                        <span class="file-name">home.html <span class="badge">工作台</span></span>
-                                        <button class="copy-btn" data-url="销售综合管理系统原型/pages/home.html">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                            </svg>
-                                            复制
-                                        </button>
-                                        <button class="open-btn" data-url="销售综合管理系统原型/pages/home.html">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                <polyline points="15 3 21 3 21 9"></polyline>
-                                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                                            </svg>
-                                            访问
-                                        </button>
-                                    </div>
-                                </li>
+                                <li><div class="item-wrapper"><span class="icon icon-file">📄</span><span class="file-name">界面布局及UI参考.png</span><button class="copy-btn" data-url="销售综合管理系统原型/img/界面布局及UI参考.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="销售综合管理系统原型/img/界面布局及UI参考.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
                             </ul>
                         </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">PRD-账单管理模块.md <span class="badge">需求文档</span></span>
-                                <button class="copy-btn" data-url="销售综合管理系统原型/PRD-账单管理模块.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="销售综合管理系统原型/PRD-账单管理模块.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-md">📝</span>
-                                <span class="file-name">页面规则-账单管理.md <span class="badge">页面规则</span></span>
-                                <button class="copy-btn" data-url="销售综合管理系统原型/页面规则-账单管理.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="销售综合管理系统原型/页面规则-账单管理.md">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                
-                <li class="folder">
-                    <div class="item-wrapper">
-                        <button class="folder-toggle">▶</button>
-                        <span class="icon icon-folder">📂</span>
-                        <span class="file-name">deploy/ <span class="badge">部署目录</span></span>
-                    </div>
-                    <ul class="folder-content">
-                        <li>
-                            <div class="item-wrapper">
-                                <span class="icon icon-html">🌐</span>
-                                <span class="file-name">index.html</span>
-                                <button class="copy-btn" data-url="deploy/index.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                    复制
-                                </button>
-                                <button class="open-btn" data-url="deploy/index.html">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    访问
-                                </button>
-                            </div>
+                        <li class="folder">
+                            <div class="item-wrapper"><button class="folder-toggle">▶</button><span class="icon icon-folder">📂</span><span class="file-name">pages/ <span class="badge">页面文件</span></span></div>
+                            <ul class="folder-content">
+                                <li><div class="item-wrapper"><span class="icon icon-html">🌐</span><span class="file-name">bill-management.html <span class="badge">账单管理</span></span><button class="copy-btn" data-url="销售综合管理系统原型/pages/bill-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="销售综合管理系统原型/pages/bill-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                                <li><div class="item-wrapper"><span class="icon icon-html">🌐</span><span class="file-name">home.html <span class="badge">工作台</span></span><button class="copy-btn" data-url="销售综合管理系统原型/pages/home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制</button><button class="open-btn" data-url="销售综合管理系统原型/pages/home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>访问</button></div></li>
+                            </ul>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
-        
-        <div class="footer">
-            <p>项目地址: <a href="https://github.com/Fred-Leifu/ai-zidonghua" target="_blank">GitHub</a></p>
-        </div>
+        <div class="footer"><p>项目地址: <a href="https://github.com/Fred-Leifu/ai-zidonghua" target="_blank">GitHub</a></p></div>
     </div>
-
     <script>
         const baseUrl = 'https://fred-leifu.github.io/ai-zidonghua/';
-        
         document.addEventListener('DOMContentLoaded', function() {
             const folderToggles = document.querySelectorAll('.folder-toggle');
             const copyButtons = document.querySelectorAll('.copy-btn');
+            const openButtons = document.querySelectorAll('.open-btn');
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
-            const treeWrapper = document.querySelector('.tree-wrapper');
             
-            folderToggles.forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const folderContent = this.parentElement.parentElement.querySelector('.folder-content');
-                    const icon = this.parentElement.querySelector('.icon');
-                    
-                    this.classList.toggle('open');
-                    folderContent.classList.toggle('open');
-                    icon.classList.toggle('icon-folder');
-                    icon.classList.toggle('icon-folder-open');
-                });
-            });
+            folderToggles.forEach(toggle => toggle.addEventListener('click', function() {
+                const folderContent = this.parentElement.parentElement.querySelector('.folder-content');
+                const icon = this.parentElement.querySelector('.icon');
+                this.classList.toggle('open');
+                folderContent.classList.toggle('open');
+                icon.classList.toggle('icon-folder');
+                icon.classList.toggle('icon-folder-open');
+            }));
             
-            copyButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const relativeUrl = this.getAttribute('data-url');
-                    const fullUrl = baseUrl + relativeUrl;
-                    
-                    navigator.clipboard.writeText(fullUrl).then(() => {
-                        this.classList.add('copied');
-                        this.innerHTML = `
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            已复制
-                        `;
-                        
-                        setTimeout(() => {
-                            this.classList.remove('copied');
-                            this.innerHTML = `
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                复制
-                            `;
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('复制失败:', err);
-                    });
+            copyButtons.forEach(button => button.addEventListener('click', function() {
+                const url = baseUrl + this.getAttribute('data-url');
+                navigator.clipboard.writeText(url).then(() => {
+                    this.classList.add('copied');
+                    this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>已复制';
+                    setTimeout(() => {
+                        this.classList.remove('copied');
+                        this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>复制';
+                    }, 2000);
                 });
-            });
+            }));
             
-            const openButtons = document.querySelectorAll('.open-btn');
-            openButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const relativeUrl = this.getAttribute('data-url');
-                    const fullUrl = baseUrl + relativeUrl;
-                    window.open(fullUrl, '_blank');
-                });
-            });
+            openButtons.forEach(button => button.addEventListener('click', function() {
+                window.open(baseUrl + this.getAttribute('data-url'), '_blank');
+            }));
             
             searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase().trim();
-                
-                if (!searchTerm) {
-                    resetSearch();
-                    return;
-                }
-                
-                searchFiles(searchTerm);
+                const term = this.value.toLowerCase().trim();
+                if (!term) { resetSearch(); return; }
+                searchFiles(term);
             });
             
-            function searchFiles(searchTerm) {
-                const allItems = document.querySelectorAll('.tree li');
+            function searchFiles(term) {
                 const folderItems = document.querySelectorAll('.tree li.folder');
                 const fileItems = document.querySelectorAll('.tree li:not(.folder)');
-                
                 let matchCount = 0;
                 
                 folderItems.forEach(folder => {
@@ -736,13 +175,11 @@
                 });
                 
                 fileItems.forEach(item => {
-                    const fileName = item.querySelector('.file-name').textContent.toLowerCase();
-                    const itemWrapper = item.querySelector('.item-wrapper');
-                    
-                    if (fileName.includes(searchTerm)) {
+                    const name = item.querySelector('.file-name').textContent.toLowerCase();
+                    const wrapper = item.querySelector('.item-wrapper');
+                    if (name.includes(term)) {
                         item.classList.remove('hidden');
-                        itemWrapper.classList.add('match');
-                        
+                        wrapper.classList.add('match');
                         const parentFolder = item.closest('.folder');
                         if (parentFolder) {
                             parentFolder.classList.remove('hidden');
@@ -750,26 +187,19 @@
                             parentFolder.querySelector('.folder-toggle').classList.add('open');
                             parentFolder.querySelector('.icon').classList.remove('icon-folder');
                             parentFolder.querySelector('.icon').classList.add('icon-folder-open');
-                            
-                            const folderName = parentFolder.querySelector('.file-name').textContent.toLowerCase();
-                            if (folderName.includes(searchTerm)) {
-                                parentFolder.querySelector('.item-wrapper').classList.add('match');
-                            }
                         }
                         matchCount++;
                     } else {
                         item.classList.add('hidden');
-                        itemWrapper.classList.remove('match');
+                        wrapper.classList.remove('match');
                     }
                 });
                 
                 folderItems.forEach(folder => {
-                    const folderName = folder.querySelector('.file-name').textContent.toLowerCase();
-                    const hasVisibleChildren = folder.querySelector('.folder-content li:not(.hidden)');
-                    
-                    if (!hasVisibleChildren && !folderName.includes(searchTerm)) {
-                        folder.classList.add('hidden');
-                    } else if (folderName.includes(searchTerm)) {
+                    const name = folder.querySelector('.file-name').textContent.toLowerCase();
+                    const hasVisible = folder.querySelector('.folder-content li:not(.hidden)');
+                    if (!hasVisible && !name.includes(term)) folder.classList.add('hidden');
+                    else if (name.includes(term)) {
                         folder.querySelector('.item-wrapper').classList.add('match');
                         folder.querySelector('.folder-content').classList.add('open');
                         folder.querySelector('.folder-toggle').classList.add('open');
@@ -779,32 +209,18 @@
                     }
                 });
                 
-                if (matchCount === 0) {
-                    searchResults.innerHTML = `<span style="color: #ef4444;">未找到包含 "<span class="highlight">${searchTerm}</span>" 的文件</span>`;
-                } else {
-                    searchResults.innerHTML = `找到 <span class="highlight">${matchCount}</span> 个匹配结果`;
-                }
+                searchResults.innerHTML = matchCount === 0 
+                    ? `<span style="color: #ef4444;">未找到包含 "<span class="highlight">${term}</span>" 的文件</span>`
+                    : `找到 <span class="highlight">${matchCount}</span> 个匹配结果`;
             }
             
             function resetSearch() {
                 searchResults.innerHTML = '';
-                
-                const allItems = document.querySelectorAll('.tree li');
-                const folderContents = document.querySelectorAll('.folder-content');
-                const folderToggles = document.querySelectorAll('.folder-toggle');
-                const icons = document.querySelectorAll('.icon');
-                const itemWrappers = document.querySelectorAll('.item-wrapper');
-                
-                allItems.forEach(item => item.classList.remove('hidden'));
-                folderContents.forEach(content => content.classList.remove('open'));
-                folderToggles.forEach(toggle => toggle.classList.remove('open'));
-                icons.forEach(icon => {
-                    icon.classList.remove('icon-folder-open');
-                    if (icon.classList.contains('icon-folder-open')) {
-                        icon.classList.add('icon-folder');
-                    }
-                });
-                itemWrappers.forEach(wrapper => wrapper.classList.remove('match'));
+                document.querySelectorAll('.tree li').forEach(item => item.classList.remove('hidden'));
+                document.querySelectorAll('.folder-content').forEach(content => content.classList.remove('open'));
+                document.querySelectorAll('.folder-toggle').forEach(toggle => toggle.classList.remove('open'));
+                document.querySelectorAll('.icon').forEach(icon => { icon.classList.remove('icon-folder-open'); });
+                document.querySelectorAll('.item-wrapper').forEach(wrapper => wrapper.classList.remove('match'));
             }
         });
     </script>
