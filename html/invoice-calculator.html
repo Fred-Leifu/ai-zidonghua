@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>存货商品开票数量生成器</title>
     <style>
+        /* ===== 全局样式重置 ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* ===== 页面主体样式 ===== */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
+
+        /* ===== 容器样式 ===== */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -24,6 +29,8 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
+
+        /* ===== 头部区域样式 ===== */
         .header {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
@@ -39,9 +46,13 @@
             font-size: 14px;
             opacity: 0.8;
         }
+
+        /* ===== 内容区域样式 ===== */
         .content {
             padding: 24px;
         }
+
+        /* ===== 表单组样式 ===== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -68,11 +79,15 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
+        /* ===== 表单行布局 ===== */
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
+
+        /* ===== 按钮样式 ===== */
         .btn {
             width: 100%;
             padding: 14px;
@@ -93,6 +108,8 @@
         .btn:active {
             transform: translateY(0);
         }
+
+        /* ===== 结果区域样式 ===== */
         .result-section {
             margin-top: 24px;
             padding: 20px;
@@ -111,6 +128,8 @@
             background: #f0fff4;
             border: 1px solid #c6f6d5;
         }
+
+        /* ===== 结果标题样式 ===== */
         .result-title {
             font-size: 16px;
             font-weight: 600;
@@ -128,6 +147,8 @@
         .result-title.warning {
             color: #d69e2e;
         }
+
+        /* ===== 复制按钮样式 ===== */
         .copy-btn {
             margin-left: auto;
             padding: 8px 16px;
@@ -142,6 +163,8 @@
         .copy-btn:hover {
             background: #3182ce;
         }
+
+        /* ===== 结果消息样式 ===== */
         .result-message {
             font-size: 14px;
             line-height: 1.6;
@@ -150,6 +173,8 @@
         .result-message.error {
             color: #c53030;
         }
+
+        /* ===== 统计数据区域样式 ===== */
         .result-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -173,6 +198,8 @@
             font-weight: 600;
             color: #333;
         }
+
+        /* ===== 订单列表样式 ===== */
         .order-list {
             margin-top: 16px;
             max-height: 300px;
@@ -213,6 +240,8 @@
             color: #d69e2e;
             margin-top: 2px;
         }
+
+        /* ===== 图例说明样式 ===== */
         .legend {
             margin-top: 16px;
             padding: 12px;
@@ -238,6 +267,8 @@
             height: 16px;
             border-radius: 4px;
         }
+
+        /* ===== 范围信息提示样式 ===== */
         .range-info {
             margin-top: 12px;
             padding: 12px;
@@ -250,6 +281,8 @@
             font-weight: 600;
             margin-bottom: 4px;
         }
+
+        /* ===== 算法流程说明样式 ===== */
         .algorithm-steps {
             margin-top: 24px;
             padding: 20px;
@@ -270,12 +303,17 @@
     </style>
 </head>
 <body>
+    <!-- 主容器 -->
     <div class="container">
+        <!-- 头部区域 -->
         <div class="header">
             <h1>📦 存货商品开票数量生成器</h1>
             <p>基于正态分布随机生成无规律的开票数量</p>
         </div>
+        
+        <!-- 内容区域 -->
         <div class="content">
+            <!-- 表单行：存货数量和订单数量输入 -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="stockQty">存货数量 (S)</label>
@@ -287,14 +325,17 @@
                 </div>
             </div>
 
+            <!-- 生成规则说明 -->
             <div class="range-info">
                 <h4>📊 生成规则</h4>
                 <p id="rangeText">基于平均值（存货/订单）的正态分布随机生成</p>
             </div>
 
+            <!-- 操作按钮 -->
             <button class="btn" onclick="generate()">开始生成</button>
             <button class="btn" onclick="reset()" style="background: #6c757d; margin-top: 8px;">重置</button>
 
+            <!-- 结果展示区域 -->
             <div class="result-section" id="resultSection">
                 <div class="result-title" id="resultTitle">
                     <span id="resultIcon">📋</span>
@@ -305,6 +346,7 @@
                 </div>
                 <div class="result-message" id="resultMessage"></div>
                 
+                <!-- 统计数据 -->
                 <div class="result-stats" id="resultStats" style="display: none;">
                     <div class="stat-item">
                         <div class="stat-label">订单总数</div>
@@ -320,10 +362,13 @@
                     </div>
                 </div>
 
+                <!-- 订单列表 -->
                 <div class="order-list" id="orderList"></div>
                 
+                <!-- 复制成功提示 -->
                 <div id="copySuccess" style="display: none; text-align: center; color: #48bb78; padding: 10px;">✓ 已复制到剪贴板，可直接粘贴到Excel</div>
 
+                <!-- 图例说明 -->
                 <div class="legend" id="legend" style="display: none;">
                     <h4>🔍 图例说明</h4>
                     <div class="legend-item">
@@ -337,11 +382,11 @@
                 </div>
             </div>
 
+            <!-- 算法流程说明 -->
             <div class="algorithm-steps">
                 <h4>🔄 算法流程说明</h4>
                 <ol>
-                    <li><strong>初始化</strong>：每单分配1条，确保每个订单至少有值</li>
-                    <li><strong>正态分布分配（带相邻校验）</strong>：围绕平均值随机生成，若与前两单相同则重新生成</li>
+                    <li><strong>正态分布分配（带相邻校验）</strong>：围绕平均值随机生成，确保每个订单至少有值，若与前两单相同则重新生成</li>
                     <li><strong>总和精确调整</strong>：调整差值确保总和严格等于存货数量，同时避免连续三个相同值</li>
                     <li><strong>一键复制</strong>：生成可复制结果，支持直接粘贴到Excel</li>
                 </ol>
@@ -350,17 +395,25 @@
     </div>
 
     <script>
+        /**
+         * 复制结果到剪贴板
+         * 将当前生成的开票数量数组以换行符分隔的形式复制到剪贴板
+         */
         function copyToClipboard() {
+            // 检查是否有生成的数量数据
             if (!window.currentQuantities || window.currentQuantities.length === 0) {
                 alert('请先生成开票数量');
                 return;
             }
             
+            // 将数组转换为换行分隔的文本
             const text = window.currentQuantities.join('\n');
             
+            // 使用Clipboard API复制到剪贴板
             navigator.clipboard.writeText(text).then(() => {
                 const copySuccess = document.getElementById('copySuccess');
                 copySuccess.style.display = 'block';
+                // 3秒后隐藏成功提示
                 setTimeout(() => {
                     copySuccess.style.display = 'none';
                 }, 3000);
@@ -370,23 +423,38 @@
             });
         }
 
+        /**
+         * 验证输入参数
+         * @param {number} stockQty - 存货数量
+         * @param {number} orderQty - 订单数量
+         * @returns {object} - 验证结果对象，包含valid和message字段
+         */
         function validate(stockQty, orderQty) {
+            // 验证是否为整数
             if (!Number.isInteger(stockQty) || !Number.isInteger(orderQty)) {
                 return { valid: false, message: '存货商品数量/订单数量不能为0、负数、小数' };
             }
+            // 验证是否大于0
             if (stockQty <= 0 || orderQty <= 0) {
                 return { valid: false, message: '存货商品数量/订单数量不能为0、负数、小数' };
             }
+            // 验证存货数量不能小于订单数量（每单至少1条）
             if (stockQty < orderQty) {
                 return { valid: false, message: '存货商品数量不能小于订单数量（每单至少1条）' };
             }
             return { valid: true, message: '' };
         }
 
+        /**
+         * 主生成函数
+         * 获取用户输入，验证参数，调用生成算法，并展示结果
+         */
         function generate() {
+            // 获取用户输入的存货数量和订单数量
             const stockQty = parseInt(document.getElementById('stockQty').value);
             const orderQty = parseInt(document.getElementById('orderQty').value);
 
+            // 获取页面元素引用
             const validation = validate(stockQty, orderQty);
             const resultSection = document.getElementById('resultSection');
             const resultTitle = document.getElementById('resultTitle');
@@ -397,6 +465,7 @@
             const copyBtn = document.getElementById('copyBtn');
             const copySuccess = document.getElementById('copySuccess');
 
+            // 如果验证失败，显示错误信息
             if (!validation.valid) {
                 resultSection.className = 'result-section show error';
                 resultTitle.className = 'result-title error';
@@ -410,16 +479,20 @@
                 return;
             }
 
+            // 调用生成算法
             const result = generateQuantities(stockQty, orderQty);
 
+            // 保存生成的数量到全局变量，供复制功能使用
             window.currentQuantities = result.quantities;
 
+            // 设置成功状态的样式
             resultSection.className = 'result-section show success';
             resultTitle.className = 'result-title success';
             document.getElementById('resultIcon').textContent = '✅';
             resultMessage.className = 'result-message';
             resultMessage.innerHTML = `已成功为 ${orderQty} 个订单生成开票数量，合计 ${result.sum} 条。`;
 
+            // 更新统计数据
             document.getElementById('statTotal').textContent = orderQty;
             document.getElementById('statSum').textContent = result.sum;
             document.getElementById('statAvg').textContent = (result.sum / orderQty).toFixed(1);
@@ -428,6 +501,7 @@
             copyBtn.style.display = 'inline-block';
             copySuccess.style.display = 'none';
 
+            // 渲染订单列表
             let html = '';
             result.quantities.forEach((qty, index) => {
                 html += `
@@ -441,66 +515,68 @@
             orderList.innerHTML = html;
         }
 
+        /**
+         * 核心生成算法 - 基于正态分布生成开票数量
+         * @param {number} S - 存货数量（总数量）
+         * @param {number} N - 订单数量
+         * @returns {object} - 包含quantities数组和sum总和的结果对象
+         */
         function generateQuantities(S, N) {
             const avg = Math.round(S / N);
             let quantities = [];
-            let totalAssigned = 0;
-            let remaining = S;
 
-            for (let i = 0; i < N && remaining > 0; i++) {
-                const remainingOrders = N - i;
-                const minForThis = Math.max(1, remaining - (remainingOrders - 1) * Math.floor(avg * 2));
-                const maxForThis = Math.min(Math.floor(avg * 2), remaining - (remainingOrders - 1));
-                
+            // 第一步：使用正态分布为每个订单生成初始值，确保每个订单至少有1条，且避免连续三个相同值
+            for (let i = 0; i < N; i++) {
                 let value;
                 let attempts = 0;
                 
                 do {
-                    const center = Math.round((minForThis + maxForThis) / 2);
-                    const range = maxForThis - minForThis;
-                    const stdDev = Math.max(1, Math.floor(range / 4));
-                    
-                    if (range > 0) {
-                        value = Math.round(normalRandom(center, stdDev));
-                        value = Math.max(minForThis, Math.min(maxForThis, value));
-                    } else {
-                        value = minForThis;
-                    }
+                    // 以平均值为中心，标准差为平均值的1/3生成随机数
+                    value = Math.round(normalRandom(avg, Math.max(1, Math.floor(avg / 3))));
+                    // 确保值至少为1
+                    value = Math.max(1, value);
                     attempts++;
-                } while (attempts < 50 && i >= 2 && value === quantities[i-1] && value === quantities[i-2]);
+                } while (attempts < 100 && i >= 2 && value === quantities[i-1] && value === quantities[i-2]);
                 
                 quantities.push(value);
-                totalAssigned += value;
-                remaining -= value;
             }
 
-            let diff = S - totalAssigned;
+            // 第二步：精确调整总和，确保总和严格等于存货数量
+            let currentSum = quantities.reduce((a, b) => a + b, 0);
+            let diff = S - currentSum;
+
             while (diff !== 0) {
+                // 根据差值确定调整方向
+                const change = diff > 0 ? 1 : -1;
+                // 找出可以调整的候选订单（增加时所有订单都可以，减少时订单数量必须大于1）
                 const candidates = quantities
                     .map((val, idx) => ({ val, idx }))
-                    .filter(item => diff > 0 || item.val > 1);
-                
+                    .filter(item => change > 0 || item.val > 1);
+
                 if (candidates.length === 0) break;
-                
+
                 let found = false;
+                // 随机打乱候选顺序，避免总是调整前面的订单
+                shuffleArray(candidates);
+                
                 for (const candidate of candidates) {
-                    const newValue = candidate.val + (diff > 0 ? 1 : -1);
-                    const hasTriple = 
-                        (candidate.idx >= 2 && newValue === quantities[candidate.idx-1] && newValue === quantities[candidate.idx-2]) ||
-                        (candidate.idx >= 1 && candidate.idx < N-1 && newValue === quantities[candidate.idx-1] && newValue === quantities[candidate.idx+1]);
+                    const newValue = candidate.val + change;
+                    // 检查是否会产生连续三个相同值
+                    const hasTriple = checkTriple(quantities, candidate.idx, newValue);
                     
                     if (!hasTriple) {
                         quantities[candidate.idx] = newValue;
-                        diff += diff > 0 ? -1 : 1;
+                        diff -= change;
                         found = true;
                         break;
                     }
                 }
-                
-                if (!found && candidates.length > 0) {
+
+                // 如果没有找到不会产生三连的调整位置，则强制调整（保证总和正确优先）
+                if (!found) {
                     const idx = candidates[Math.floor(Math.random() * candidates.length)].idx;
-                    quantities[idx] += diff > 0 ? 1 : -1;
-                    diff += diff > 0 ? -1 : 1;
+                    quantities[idx] += change;
+                    diff -= change;
                 }
             }
 
@@ -511,92 +587,58 @@
             };
         }
 
+        /**
+         * 检查在指定位置设置新值是否会产生连续三个相同值
+         * @param {number[]} arr - 数组
+         * @param {number} idx - 位置索引
+         * @param {number} newValue - 新值
+         * @returns {boolean} - 是否会产生三连
+         */
+        function checkTriple(arr, idx, newValue) {
+            // 检查左边两个
+            if (idx >= 2 && newValue === arr[idx-1] && newValue === arr[idx-2]) {
+                return true;
+            }
+            // 检查右边两个
+            if (idx < arr.length - 2 && newValue === arr[idx+1] && newValue === arr[idx+2]) {
+                return true;
+            }
+            // 检查左右各一个
+            if (idx >= 1 && idx < arr.length - 1 && newValue === arr[idx-1] && newValue === arr[idx+1]) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Fisher-Yates洗牌算法 - 打乱数组
+         * @param {array} array - 待打乱的数组
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        /**
+         * 正态分布随机数生成器（Box-Muller变换）
+         * @param {number} mean - 均值
+         * @param {number} stdDev - 标准差
+         * @returns {number} - 符合正态分布的随机数
+         */
         function normalRandom(mean, stdDev) {
             let u1 = Math.random();
             let u2 = Math.random();
+            // Box-Muller变换公式
             let z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
             return z0 * stdDev + mean;
         }
 
-        function shuffleArray(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        function eliminateConsecutiveTriplesSimple(arr) {
-            const result = [...arr];
-            let changed = true;
-            let iterations = 0;
-            
-            while (changed && iterations < 20) {
-                changed = false;
-                iterations++;
-                
-                for (let i = 2; i < result.length; i++) {
-                    if (result[i] === result[i-1] && result[i] === result[i-2]) {
-                        const swappable = [];
-                        for (let j = 0; j < result.length; j++) {
-                            if (j < i-2 || j > i) {
-                                if (result[j] !== result[i]) {
-                                    swappable.push(j);
-                                }
-                            }
-                        }
-                        
-                        if (swappable.length > 0) {
-                            const randomIdx = Math.floor(Math.random() * swappable.length);
-                            const swapWith = swappable[randomIdx];
-                            [result[i], result[swapWith]] = [result[swapWith], result[i]];
-                            changed = true;
-                        } else if (i + 1 < result.length) {
-                            [result[i], result[i+1]] = [result[i+1], result[i]];
-                            changed = true;
-                        }
-                    }
-                }
-            }
-            
-            return result;
-        }
-
-        function ensureSumExact(arr, targetSum) {
-            const result = [...arr];
-            let currentSum = result.reduce((a, b) => a + b, 0);
-            let diff = targetSum - currentSum;
-
-            while (diff !== 0) {
-                const indices = result
-                    .map((val, idx) => ({ val, idx }))
-                    .filter(item => diff > 0 || item.val > 1)
-                    .sort((a, b) => diff > 0 ? a.val - b.val : b.val - a.val);
-                
-                if (indices.length === 0) break;
-                
-                const idx = indices[0].idx;
-                const change = diff > 0 ? 1 : -1;
-                const newValue = result[idx] + change;
-                
-                const hasTriple = 
-                    (idx >= 2 && newValue === result[idx-1] && newValue === result[idx-2]) ||
-                    (idx >= 1 && idx < result.length - 1 && newValue === result[idx-1] && newValue === result[idx+1]);
-                
-                if (!hasTriple || indices.length === 1) {
-                    result[idx] = newValue;
-                    diff -= change;
-                } else if (indices.length > 1) {
-                    const idx2 = indices[1].idx;
-                    result[idx2] += change;
-                    diff -= change;
-                }
-            }
-            
-            return result;
-        }
-
+        /**
+         * 重置表单
+         * 清空输入框和结果区域
+         */
         function reset() {
             document.getElementById('stockQty').value = '';
             document.getElementById('orderQty').value = '';
