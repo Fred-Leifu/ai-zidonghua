@@ -1,0 +1,50 @@
+# 部署时忽略的文件和目录
+# 这个文件用于告诉部署脚本在生成 index.html 时不需要扫描的内容
+# 支持精确匹配、包含匹配、通配符匹配
+# 以 # 开头的行是注释，会被忽略
+
+# ==================== 默认忽略列表（已内置，不需要重复写）
+# .git
+# .trae
+# node_modules
+# dist
+# .idea
+# .vscode
+# *.log
+# __pycache__
+# *.pyc
+
+# ==================== 项目特定的忽略项
+# 添加你自己项目中需要忽略的目录和文件
+
+# 编译和缓存
+build
+cache
+temp
+tmp
+
+# 测试相关
+test
+tests
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# IDE和编辑器配置
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# 环境变量和密钥
+.env
+.env.local
+.env.*.local
+*.env
+
+# 大文件（如果不需要显示）
+# *.zip
+# *.rar
+# *.tar.gz
